@@ -1,547 +1,569 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <title>AnyDoor</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
 
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        width: 320px;
-        min-height: 280px;
-        background: #ffffff;
-        color: #333;
-      }
+<head>
+  <meta charset="utf-8" />
+  <title>AnyDoor</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-      /* 视图管理 */
-      .view {
-        display: none;
-      }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      width: 320px;
+      min-height: 280px;
+      background: #ffffff;
+      color: #333;
+    }
 
-      .view.active {
-        display: block;
-      }
+    /* 视图管理 */
+    .view {
+      display: none;
+    }
 
-      /* ========== 登录视图 ========== */
-      #login-view {
-        padding: 40px 30px;
-      }
+    .view.active {
+      display: block;
+    }
 
-      .login-title {
-        text-align: center;
-        font-size: 24px;
-        font-weight: 600;
-        margin-bottom: 30px;
-        color: #4f46e5;
-      }
+    /* ========== 登录视图 ========== */
+    #login-view {
+      padding: 40px 30px;
+    }
 
-      .form-group {
-        margin-bottom: 16px;
-      }
+    .login-title {
+      text-align: center;
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 30px;
+      color: #4f46e5;
+    }
 
-      .form-group input,
-      .form-group select {
-        width: 100%;
-        padding: 12px 16px;
-        border: 1px solid #e5e7eb;
-        border-radius: 8px;
-        font-size: 14px;
-        transition: border-color 0.2s;
-      }
+    .form-group {
+      margin-bottom: 16px;
+    }
 
-      .form-group input:focus,
-      .form-group select:focus {
-        outline: none;
-        border-color: #4f46e5;
-      }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
 
-      .form-group input::placeholder {
-        color: #9ca3af;
-      }
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #4f46e5;
+    }
 
-      .btn {
-        width: 100%;
-        padding: 12px;
-        border: none;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-      }
+    .form-group input::placeholder {
+      color: #9ca3af;
+    }
 
-      .btn-primary {
-        background: #4f46e5;
-        color: white;
-      }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
 
-      .btn-primary:hover {
-        background: #4338ca;
-      }
+    .btn-primary {
+      background: #4f46e5;
+      color: white;
+    }
 
-      .btn-primary:active {
-        transform: scale(0.98);
-      }
+    .btn-primary:hover {
+      background: #4338ca;
+    }
 
-      .btn:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-      }
+    .btn-primary:active {
+      transform: scale(0.98);
+    }
 
-      /* 消息提示 */
-      .message {
-        padding: 10px 12px;
-        border-radius: 6px;
-        font-size: 13px;
-        margin-bottom: 16px;
-        display: none;
-      }
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
 
-      .message.show {
-        display: block;
-      }
+    /* 消息提示 */
+    .message {
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+    }
 
-      .message.success {
-        background: #d1fae5;
-        color: #065f46;
-      }
+    .message.show {
+      display: block;
+    }
 
-      .message.error {
-        background: #fee2e2;
-        color: #991b1b;
-      }
+    .message.success {
+      background: #d1fae5;
+      color: #065f46;
+    }
 
-      .message.info {
-        background: #dbeafe;
-        color: #1e40af;
-      }
+    .message.error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
 
-      /* 加载动画 */
-      .spinner {
-        display: inline-block;
-        width: 14px;
-        height: 14px;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        border-radius: 50%;
-        border-top-color: white;
-        animation: spin 0.6s linear infinite;
-      }
+    .message.info {
+      background: #dbeafe;
+      color: #1e40af;
+    }
 
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
+    /* 加载动画 */
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.6s linear infinite;
+    }
 
-      /* ========== 功能视图 ========== */
-      #main-view {
-        padding: 20px;
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
       }
+    }
 
-      .header-bar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 20px;
-        padding-bottom: 16px;
-        border-bottom: 1px solid #e5e7eb;
-      }
+    /* ========== 功能视图 ========== */
+    #main-view {
+      padding: 20px;
+    }
 
-      .user-name {
-        font-size: 15px;
-        font-weight: 600;
-        color: #1f2937;
-      }
+    .header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e5e7eb;
+    }
 
-      .header-actions {
-        display: flex;
-        gap: 8px;
-      }
+    .user-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1f2937;
+    }
 
-      .icon-btn {
-        padding: 6px 12px;
-        background: transparent;
-        border: 1px solid #e5e7eb;
-        border-radius: 6px;
-        font-size: 13px;
-        cursor: pointer;
-        transition: all 0.2s;
-        color: #6b7280;
-      }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
 
-      .icon-btn:hover {
-        background: #f9fafb;
-        border-color: #d1d5db;
-        color: #374151;
-      }
+    .icon-btn {
+      padding: 6px 12px;
+      background: transparent;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #6b7280;
+    }
 
-      /* 按钮组（一行两个按钮） */
-      .button-group {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        margin-bottom: 16px;
-      }
+    .icon-btn:hover {
+      background: #f9fafb;
+      border-color: #d1d5db;
+      color: #374151;
+    }
 
-      .action-btn {
-        padding: 14px;
-        border: none;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-      }
+    /* 按钮组（一行两个按钮） */
+    .button-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
 
-      .btn-upload {
-        background: #10b981;
-        color: white;
-      }
+    .action-btn {
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
 
-      .btn-upload:hover {
-        background: #059669;
-      }
+    .btn-upload {
+      background: #10b981;
+      color: white;
+    }
 
-      .btn-sync {
-        background: #4f46e5;
-        color: white;
-      }
+    .btn-upload:hover {
+      background: #059669;
+    }
 
-      .btn-sync:hover {
-        background: #4338ca;
-      }
+    .btn-sync {
+      background: #4f46e5;
+      color: white;
+    }
 
-      .action-btn:active {
-        transform: scale(0.98);
-      }
+    .btn-sync:hover {
+      background: #4338ca;
+    }
 
-      .action-btn:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none !important;
-      }
+    .action-btn:active {
+      transform: scale(0.98);
+    }
 
-      /* Bundle 选择器 */
-      .bundle-selector {
-        margin-bottom: 16px;
-      }
+    .action-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
 
-      .bundle-selector label {
-        display: block;
-        font-size: 13px;
-        color: #6b7280;
-        margin-bottom: 8px;
-      }
+    /* Bundle 选择器 */
+    .bundle-selector {
+      margin-bottom: 16px;
+    }
 
-      .bundle-selector select {
-        width: 100%;
-        padding: 10px 12px;
-        border: 1px solid #e5e7eb;
-        border-radius: 6px;
-        font-size: 13px;
-        background: white;
-      }
+    .bundle-selector label {
+      display: block;
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
 
-      .bundle-selector select:focus {
-        outline: none;
-        border-color: #4f46e5;
-      }
+    .bundle-selector select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      font-size: 13px;
+      background: white;
+    }
 
-      /* 结果展示 */
-      .result-box {
-        background: #f9fafb;
-        padding: 12px;
-        border-radius: 6px;
-        border: 1px solid #e5e7eb;
-        margin-top: 12px;
-        font-size: 12px;
-        line-height: 1.6;
-        white-space: pre-wrap;
-        word-break: break-all;
-        max-height: 200px;
-        overflow-y: auto;
-      }
+    .bundle-selector select:focus {
+      outline: none;
+      border-color: #4f46e5;
+    }
 
-      .result-box:empty {
-        display: none;
-      }
+    /* 结果展示 */
+    .result-box {
+      background: #f9fafb;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+      margin-top: 12px;
+      font-size: 12px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 200px;
+      overflow-y: auto;
+    }
 
-      /* 复制按钮 */
-      .copy-btn {
-        width: 100%;
-        padding: 10px;
-        margin-top: 8px;
-        background: #4f46e5;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s;
-      }
+    .result-box:empty {
+      display: none;
+    }
 
-      .copy-btn:hover {
-        background: #4338ca;
-      }
+    /* 复制按钮 */
+    .copy-btn {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      background: #4f46e5;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
 
-      .copy-btn:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-      }
+    .copy-btn:hover {
+      background: #4338ca;
+    }
 
-      /* 空状态提示 */
-      .empty-state {
-        text-align: center;
-        padding: 20px;
-        color: #9ca3af;
-        font-size: 13px;
-      }
+    .copy-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
 
-      /* 对话框 */
-      .dialog {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
-        align-items: center;
-        justify-content: center;
-      }
+    /* 空状态提示 */
+    .empty-state {
+      text-align: center;
+      padding: 20px;
+      color: #9ca3af;
+      font-size: 13px;
+    }
 
-      .dialog.show {
-        display: flex;
-      }
+    /* 对话框 */
+    .dialog {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
 
-      .dialog-content {
-        background: white;
-        border-radius: 12px;
-        padding: 24px;
-        width: 90%;
-        max-width: 320px;
-        max-height: 80vh;
-        overflow-y: auto;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-      }
+    .dialog.show {
+      display: flex;
+    }
 
-      .dialog-title {
-        font-size: 18px;
-        font-weight: 600;
-        margin-bottom: 20px;
-        color: #1f2937;
-        text-align: center;
-      }
+    .dialog-content {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      width: 90%;
+      max-width: 320px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
 
-      .dialog .form-group {
-        margin-bottom: 16px;
-      }
+    .dialog-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #1f2937;
+      text-align: center;
+    }
 
-      .dialog .form-group label {
-        display: block;
-        font-size: 13px;
-        font-weight: 500;
-        color: #374151;
-        margin-bottom: 6px;
-      }
+    .dialog .form-group {
+      margin-bottom: 16px;
+    }
 
-      .dialog .form-group input,
-      .dialog .form-group select,
-      .dialog .form-group textarea {
-        width: 100%;
-        padding: 10px 12px;
-        border: 1px solid #e5e7eb;
-        border-radius: 6px;
-        font-size: 13px;
-        transition: border-color 0.2s;
-      }
+    .dialog .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 6px;
+    }
 
-      .dialog .form-group input:focus,
-      .dialog .form-group select:focus,
-      .dialog .form-group textarea:focus {
-        outline: none;
-        border-color: #4f46e5;
-      }
+    .dialog .form-group input,
+    .dialog .form-group select,
+    .dialog .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      font-size: 13px;
+      transition: border-color 0.2s;
+    }
 
-      .dialog .form-group textarea {
-        resize: vertical;
-        font-family: inherit;
-      }
+    .dialog .form-group input:focus,
+    .dialog .form-group select:focus,
+    .dialog .form-group textarea:focus {
+      outline: none;
+      border-color: #4f46e5;
+    }
 
-      .dialog .form-group .hint {
-        display: block;
-        margin-top: 4px;
-        font-size: 12px;
-        color: #6b7280;
-      }
+    .dialog .form-group textarea {
+      resize: vertical;
+      font-family: inherit;
+    }
 
-      .dialog-actions {
-        display: flex;
-        gap: 10px;
-        margin-top: 24px;
-      }
+    .dialog .form-group .hint {
+      display: block;
+      margin-top: 4px;
+      font-size: 12px;
+      color: #6b7280;
+    }
 
-      .dialog-actions .btn {
-        flex: 1;
-        padding: 10px;
-        border: none;
-        border-radius: 6px;
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s;
-      }
+    .dialog-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    }
 
-      .btn-primary {
-        background: #4f46e5;
-        color: white;
-      }
+    .dialog-actions .btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
 
-      .btn-primary:hover {
-        background: #4338ca;
-      }
+    .btn-primary {
+      background: #4f46e5;
+      color: white;
+    }
 
-      .btn-secondary {
-        background: #f3f4f6;
-        color: #374151;
-      }
+    .btn-primary:hover {
+      background: #4338ca;
+    }
 
-      .btn-secondary:hover {
-        background: #e5e7eb;
-      }
-    </style>
-  </head>
-  <body>
-    <!-- 登录视图 -->
-    <div id="login-view" class="view active">
-      <div class="login-title">🚪 AnyDoor</div>
-      <div id="login-message" class="message"></div>
-      <div class="form-group">
-        <input type="text" id="username" placeholder="用户名" autocomplete="username" />
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .btn-secondary:hover {
+      background: #e5e7eb;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 登录视图 -->
+  <div id="login-view" class="view active">
+    <div class="login-title">🚪 AnyDoor</div>
+    <div id="login-message" class="message"></div>
+    <div class="form-group">
+      <input type="text" id="username" placeholder="用户名" autocomplete="username" />
+    </div>
+    <div class="form-group">
+      <input type="password" id="password" placeholder="密码" autocomplete="current-password" />
+    </div>
+    <button id="btn-login" class="btn btn-primary">
+      <span class="btn-text">登录</span>
+    </button>
+  </div>
+
+  <!-- 功能视图 -->
+  <div id="main-view" class="view">
+    <div class="header-bar">
+      <div class="user-name" id="user-name">用户</div>
+      <div class="header-actions">
+        <button class="icon-btn" id="btn-import">📥 导入</button>
+        <button class="icon-btn" id="btn-settings">⚙️ 设置</button>
+        <button class="icon-btn" id="btn-logout">退出</button>
       </div>
-      <div class="form-group">
-        <input type="password" id="password" placeholder="密码" autocomplete="current-password" />
-      </div>
-      <button id="btn-login" class="btn btn-primary">
-        <span class="btn-text">登录</span>
+    </div>
+
+    <!-- Bundle 选择器 -->
+    <div class="bundle-selector">
+      <label for="bundle-select">📦 选择站点</label>
+      <select id="bundle-select">
+        <option value="">正在加载...</option>
+      </select>
+    </div>
+
+    <!-- 操作按钮（一行） -->
+    <div class="button-group">
+      <button id="btn-upload" class="action-btn btn-upload">
+        <span>📤</span>
+        <span class="btn-text">上传</span>
+      </button>
+      <button id="btn-sync" class="action-btn btn-sync">
+        <span>📥</span>
+        <span class="btn-text">同步</span>
       </button>
     </div>
 
-    <!-- 功能视图 -->
-    <div id="main-view" class="view">
-      <div class="header-bar">
-        <div class="user-name" id="user-name">用户</div>
-        <div class="header-actions">
-          <button class="icon-btn" id="btn-import">📥 导入</button>
-          <button class="icon-btn" id="btn-settings">⚙️ 设置</button>
-          <button class="icon-btn" id="btn-logout">退出</button>
-        </div>
+    <!-- 结果展示 -->
+    <div id="upload-result" class="result-box"></div>
+    <div id="sync-result" class="result-box"></div>
+  </div>
+
+  <!-- 上传对话框 -->
+  <div id="upload-dialog" class="dialog">
+    <div class="dialog-content">
+      <h3 class="dialog-title">📤 上传站点状态</h3>
+
+      <div class="form-group">
+        <label>名称 *</label>
+        <input type="text" id="upload-name" placeholder="例如：GitHub 主账号" />
       </div>
 
-      <!-- Bundle 选择器 -->
-      <div class="bundle-selector">
-        <label for="bundle-select">📦 选择站点</label>
-        <select id="bundle-select">
-          <option value="">正在加载...</option>
+      <div class="form-group">
+        <label>上传到组</label>
+        <select id="upload-group">
+          <option value="">默认组</option>
         </select>
       </div>
 
-      <!-- 操作按钮（一行） -->
-      <div class="button-group">
-        <button id="btn-upload" class="action-btn btn-upload">
-          <span>📤</span>
-          <span class="btn-text">上传</span>
-        </button>
-        <button id="btn-sync" class="action-btn btn-sync">
-          <span>📥</span>
-          <span class="btn-text">同步</span>
-        </button>
+      <div class="form-group">
+        <label>分享模式</label>
+        <select id="upload-share-mode">
+          <option value="PRIVATE">🔐 个人私有</option>
+          <option value="GROUP_ONLY">🔒 仅组内可见</option>
+          <option value="PUBLIC">🌐 全局公开</option>
+        </select>
+        <small class="hint">选择谁可以看到和导入这个 Bundle</small>
       </div>
 
-      <!-- 结果展示 -->
-      <div id="upload-result" class="result-box"></div>
-      <div id="sync-result" class="result-box"></div>
-    </div>
+      <div class="form-group">
+        <label>有效期（天）</label>
+        <input type="number" id="upload-expire" value="7" min="1" max="365" />
+        <small class="hint">建议值：<span id="suggested-days">7</span> 天</small>
+      </div>
 
-    <!-- 上传对话框 -->
-    <div id="upload-dialog" class="dialog">
-      <div class="dialog-content">
-        <h3 class="dialog-title">📤 上传站点状态</h3>
+      <div class="form-group">
+        <label>描述（可选）</label>
+        <textarea id="upload-desc" placeholder="简单描述这个Bundle的用途" rows="2"></textarea>
+      </div>
 
-        <div class="form-group">
-          <label>名称 *</label>
-          <input type="text" id="upload-name" placeholder="例如：GitHub 主账号" />
-        </div>
+      <div class="form-group">
+        <label>标签（可选）</label>
+        <input type="text" id="upload-tags" placeholder="用逗号分隔，例如：github,dev" />
+      </div>
 
-        <div class="form-group">
-          <label>上传到组</label>
-          <select id="upload-group">
-            <option value="">默认组</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>分享模式</label>
-          <select id="upload-share-mode">
-            <option value="PRIVATE">🔐 个人私有</option>
-            <option value="GROUP_ONLY">🔒 仅组内可见</option>
-            <option value="PUBLIC">🌐 全局公开</option>
-          </select>
-          <small class="hint">选择谁可以看到和导入这个 Bundle</small>
-        </div>
-
-        <div class="form-group">
-          <label>有效期（天）</label>
-          <input type="number" id="upload-expire" value="7" min="1" max="365" />
-          <small class="hint">建议值：<span id="suggested-days">7</span> 天</small>
-        </div>
-
-        <div class="form-group">
-          <label>描述（可选）</label>
-          <textarea id="upload-desc" placeholder="简单描述这个Bundle的用途" rows="2"></textarea>
-        </div>
-
-        <div class="form-group">
-          <label>标签（可选）</label>
-          <input type="text" id="upload-tags" placeholder="用逗号分隔，例如：github,dev" />
-        </div>
-
-        <div class="dialog-actions">
-          <button class="btn btn-secondary" id="btn-cancel-upload">取消</button>
-          <button class="btn btn-primary" id="btn-confirm-upload">确认上传</button>
-        </div>
+      <div class="dialog-actions">
+        <button class="btn btn-secondary" id="btn-cancel-upload">取消</button>
+        <button class="btn btn-primary" id="btn-confirm-upload">确认上传</button>
       </div>
     </div>
+  </div>
 
-    <!-- 导入对话框 -->
-    <div id="import-dialog" class="dialog">
-      <div class="dialog-content">
-        <h3 class="dialog-title">📥 导入站点</h3>
-        <div class="form-group">
-          <label>Bundle ID 或分享链接</label>
-          <input type="text" id="import-input" placeholder="粘贴 Bundle ID 或分享链接" />
-          <small class="hint">例如：abc123-def456-... 或完整链接</small>
-        </div>
-        <div class="dialog-actions">
-          <button class="btn btn-secondary" id="btn-cancel-import">取消</button>
-          <button class="btn btn-primary" id="btn-confirm-import">确认导入</button>
-        </div>
+  <!-- 导入对话框 -->
+  <div id="import-dialog" class="dialog">
+    <div class="dialog-content">
+      <h3 class="dialog-title">📥 导入站点</h3>
+      <div class="form-group">
+        <label>Bundle ID 或分享链接</label>
+        <input type="text" id="import-input" placeholder="粘贴 Bundle ID 或分享链接" />
+        <small class="hint">例如：abc123-def456-... 或完整链接</small>
+      </div>
+      <div class="dialog-actions">
+        <button class="btn btn-secondary" id="btn-cancel-import">取消</button>
+        <button class="btn btn-primary" id="btn-confirm-import">确认导入</button>
       </div>
     </div>
+  </div>
 
-    <script type="module" src="./popup.js"></script>
-  </body>
+  <!-- 选择操作对话框 -->
+  <div id="choice-dialog" class="dialog">
+    <div class="dialog-content">
+      <h3 class="dialog-title">⚠️ 站点已存在</h3>
+      <div style="text-align: center; margin-bottom: 20px; color: #4b5563; font-size: 14px;">
+        检测到您已上传过此站点：<br>
+        <strong id="choice-bundle-name" style="color: #1f2937; font-size: 16px;"></strong>
+      </div>
+      <div class="dialog-actions" style="flex-direction: column;">
+        <button class="btn btn-primary" id="btn-choice-update">🔄 更新现有 (推荐)</button>
+        <button class="btn btn-secondary" id="btn-choice-new">➕ 创建新上传</button>
+        <button class="btn btn-secondary" id="btn-choice-cancel"
+          style="margin-top: 8px; border: none; background: transparent; color: #6b7280;">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./popup.js"></script>
+</body>
+
 </html>

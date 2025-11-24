@@ -276,3 +276,16 @@ export function closeReference(bundleId) {
     method: 'DELETE'
   });
 }
+
+// 检查 Host 是否已存在
+export function checkBundleExists(host) {
+  return request(`/api/bundle/check-exists?host=${encodeURIComponent(host)}`);
+}
+
+// 快速更新 Bundle
+export function quickUpdateBundle(payload) {
+  return request(`/api/bundle/quick-update`, {
+    method: 'POST',
+    body: payload
+  });
+}

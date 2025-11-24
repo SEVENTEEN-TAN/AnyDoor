@@ -566,4 +566,80 @@ public class BundleController {
             return ResponseEntity.status(500).body(Map.of("error", "移除失败：" + e.getMessage()));
         }
     }
+
+    // ============================================
+    // 快速更新功能 (v3.2 新增)
+    // ============================================
+
+    /**
+     * 检查 Host 是否已存在
+     */
+    @GetMapping("/check-exists")
+    @SaCheckLogin
+    public ResponseEntity<?> checkExists(@RequestParam String host) {
+        String userId = String.valueOf(StpUtil.getLoginId());
+        var bundles = service.findBundlesByHost(userId, host);
+
+        if (bundles.isEmpty()) {
+            return ResponseEntity.ok(Map.of("exists", false));
+        }
+
+        // 返回简化的 Bundle 信息列表
+        var list = bundles.stream().map(b -> Map.of(
+                "id", b.id,
+                "name", b.name != null ? b.name : "未命名站点",
+                "updatedAt", b.updatedAt != null ? b.updatedAt : b.createdAt
+        )).toList();
+
+        return ResponseEntity.ok(Map.of(
+                "exists", true,
+                "bundles", list
+        ));
+    }
+
+    public record QuickUpdateReq(
+            String bundleId,
+            String host,
+            String etld1,
+            Object cookies,
+            Object storage
+    ) {}
+
+    /**
+     * 快速更新 Payload
+     */
+    @PostMapping("/quick-update")
+    @SaCheckLogin
+    public ResponseEntity<?> quickUpdate(@RequestBody QuickUpdateReq req) throws Exception {
+        String userId = String.valueOf(StpUtil.getLoginId());
+
+        if (req.bundleId() == null || req.bundleId().isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Bundle ID不能为空"));
+        }
+
+        String json = om.writeValueAsString(Map.of(
+                "host", req.host(),
+                "etld1", req.etld1(),
+                "cookies", req.cookies(),
+                "storage", req.storage()
+        ));
+
+        try {
+            // 默认延长 7 天 (null)
+            boolean success = service.updateBundlePayload(userId, req.bundleId(), json, null);
+
+            if (success) {
+                return ResponseEntity.ok(Map.of(
+                        "ok", true,
+                        "message", "更新成功"
+                ));
+            } else {
+                return ResponseEntity.status(500).body(Map.of("error", "更新失败"));
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "更新异常：" + e.getMessage()));
+        }
+    }
 }

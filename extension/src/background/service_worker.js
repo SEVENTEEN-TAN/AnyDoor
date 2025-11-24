@@ -1,7 +1,7 @@
 // 使用方法：由 popup 发送消息 {type:"upload"|"writeback", bundleId?} 触发。
 // 说明：核心流程：采集 → 上传完整数据；或 writeback → 原封不动回写 Cookies 和 Storage。
 
-import { uploadBundle, writeback as apiWriteback } from "../lib/api.js";
+import { uploadBundle, writeback as apiWriteback, quickUpdateBundle } from "../lib/api.js";
 import { collectCookies, writeCookies, clearAllCookies } from "../lib/cookies.js";
 import { getETLD1 } from "../lib/etld1.js";
 import { snapshotLocalStorage, snapshotSessionStorage, clearBasicStorage, applyLocalStorage, applySessionStorage } from "../lib/storage.js";
@@ -78,6 +78,29 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         count: result.count || (cookies?.length || 0)
       });
 
+    } else if (msg?.type === "quick-update") {
+      // 快速更新
+      const { bundleId, host, etld1, cookies, storage } = msg;
+      console.log("[bg] quick-update start: " + JSON.stringify({ bundleId, host, cookieCount: cookies?.length || 0 }));
+
+      const payload = {
+        bundleId,
+        host,
+        etld1,
+        cookies,
+        storage
+      };
+
+      const result = await quickUpdateBundle(payload);
+
+      if (result.ok) {
+        console.log("[bg] quick-update success");
+        sendResponse({ ok: true, message: result.message });
+      } else {
+        console.error("[bg] quick-update failed: " + result.error);
+        sendResponse({ ok: false, error: result.error });
+      }
+
     } else if (msg?.type === "upload") {
       // 保留旧的 upload 接口以保持向后兼容
       const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
@@ -111,7 +134,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         host,
         etld1,
         tabUrl: tab.url,
-        cookies: (data.cookies||[]).length,
+        cookies: (data.cookies || []).length,
         storageLocal: data.storage?.localStorage?.length || 0,
         storageSession: data.storage?.sessionStorage?.length || 0  // 添加 sessionStorage 日志
       }));
@@ -138,7 +161,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       let totalFail = 0; const detailErrors = [];
       for (const gHost of Object.keys(groups)) {
         const hasSecure = groups[gHost].some(x => !!x.secure);
-        const ctxUrl = `${hasSecure ? 'https' : (url.protocol.replace(':','')||'https')}://${gHost}/`;
+        const ctxUrl = `${hasSecure ? 'https' : (url.protocol.replace(':', '') || 'https')}://${gHost}/`;
         console.log("[bg] write group " + JSON.stringify({ host: gHost, count: groups[gHost].length, ctxUrl }));
         const res = await writeCookies(groups[gHost], ctxUrl);
         console.log("[bg] group result " + JSON.stringify({ host: gHost, ok: res.ok, fail: res.fail }));
@@ -212,7 +235,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       });
       // 自动刷新当前标签页，触发站点按新态加载（轻微延迟）
       setTimeout(() => {
-        try { chrome.tabs.reload(tab.id); } catch (_) {}
+        try { chrome.tabs.reload(tab.id); } catch (_) { }
       }, 300);
     } else {
       sendResponse({ ok: false, error: "unknown message" });

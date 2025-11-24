@@ -1,7 +1,7 @@
 // 使用方法：打开扩展 Popup，自动检查登录状态并显示对应视图
 // 说明：实现登录、上传、同步功能，支持Bundle下拉选择和设置页面
 
-import { login, logout, me, listBundles, importBundle, importByToken, updateShareMode } from "../lib/api.js";
+import { login, logout, me, listBundles, importBundle, importByToken, updateShareMode, checkBundleExists } from "../lib/api.js";
 import { CONFIG } from "../config.js";
 
 // ========== 全局变量 ==========
@@ -151,6 +151,7 @@ async function loadBundleList() {
 
 // ========== 上传功能 ==========
 let uploadData = null; // 缓存采集的数据
+let existingBundle = null; // 缓存已存在的 Bundle 信息
 
 async function handleUpload() {
   elements.uploadResult.textContent = "";
@@ -184,20 +185,40 @@ async function handleUpload() {
       storage: res.storage,
     };
 
-    // 4. 计算Cookie最大过期天数
-    const maxDays = calculateMaxCookieExpireDays(res.cookies);
+    // 4. 检查是否已存在相同 Host 的 Bundle
+    try {
+      const checkRes = await checkBundleExists(res.host);
+      if (checkRes.exists && checkRes.bundles && checkRes.bundles.length > 0) {
+        // 发现已存在，显示选择对话框
+        // 默认取第一个（最近更新的）
+        existingBundle = checkRes.bundles[0];
+        showChoiceDialog(existingBundle.name);
+        elements.uploadResult.textContent = "";
+        return;
+      }
+    } catch (e) {
+      console.warn("Check exists failed, ignore:", e);
+    }
 
-    // 5. 加载用户组列表
-    await loadUserGroups();
+    // 5. 如果不存在，继续常规流程
+    continueUploadProcess(tabTitle, res.cookies);
 
-    // 6. 显示上传对话框
-    showUploadDialog(tabTitle, maxDays);
-
-    elements.uploadResult.textContent = "";
   } catch (error) {
     console.error("Upload prepare error:", error);
     elements.uploadResult.textContent = `❌ 准备上传失败：${error.message || "未知错误"}`;
   }
+}
+
+function continueUploadProcess(defaultName, cookies) {
+  // 计算Cookie最大过期天数
+  const maxDays = calculateMaxCookieExpireDays(cookies);
+
+  // 加载用户组列表
+  loadUserGroups().then(() => {
+    // 显示上传对话框
+    showUploadDialog(defaultName, maxDays);
+    elements.uploadResult.textContent = "";
+  });
 }
 
 // 计算Cookie最大过期天数
@@ -318,12 +339,12 @@ async function handleConfirmUpload() {
       const shareText = shareMode === "PUBLIC" ? "🌐 全局公开" : "🔒 仅组内可见";
 
       const resultText = `✅ 上传成功！\n\n` +
-                        `📦 名称：${response.name}\n` +
-                        `📋 同步码：${response.bundleId}\n` +
-                        `📊 Cookie 数量：${response.count} 个\n` +
-                        `${shareText}\n` +
-                        `⏰ 过期时间：${new Date(response.expireAt).toLocaleString("zh-CN")}\n\n` +
-                        `💡 提示：已添加到您的Bundle列表，可在设置页面管理分享`;
+        `📦 名称：${response.name}\n` +
+        `📋 同步码：${response.bundleId}\n` +
+        `📊 Cookie 数量：${response.count} 个\n` +
+        `${shareText}\n` +
+        `⏰ 过期时间：${new Date(response.expireAt).toLocaleString("zh-CN")}\n\n` +
+        `💡 提示：已添加到您的Bundle列表，可在设置页面管理分享`;
       elements.uploadResult.textContent = resultText;
 
       // 刷新 Bundle 列表
@@ -362,14 +383,14 @@ async function handleSync() {
     if (res.ok) {
       const statusIcon = res.fullSync ? "✅" : "⚠️";
       const resultText = `${statusIcon} ${res.message}\n\n` +
-                        `📦 Cookie：\n` +
-                        `   预期：${res.cookies.expected} 个\n` +
-                        `   实际：${res.cookies.actual} 个\n` +
-                        `   匹配：${res.cookies.match ? "是 ✅" : "否 ❌"}\n\n` +
-                        `💾 Storage：\n` +
-                        `   localStorage：${res.storage.localStorage} 个\n` +
-                        `   sessionStorage：${res.storage.sessionStorage} 个\n\n` +
-                        `${res.fullSync ? "✨ 站点状态已完整恢复！\n页面将自动刷新..." : "⚠️ 部分数据可能未同步\n请查看控制台日志"}`;
+        `📦 Cookie：\n` +
+        `   预期：${res.cookies.expected} 个\n` +
+        `   实际：${res.cookies.actual} 个\n` +
+        `   匹配：${res.cookies.match ? "是 ✅" : "否 ❌"}\n\n` +
+        `💾 Storage：\n` +
+        `   localStorage：${res.storage.localStorage} 个\n` +
+        `   sessionStorage：${res.storage.sessionStorage} 个\n\n` +
+        `${res.fullSync ? "✨ 站点状态已完整恢复！\n页面将自动刷新..." : "⚠️ 部分数据可能未同步\n请查看控制台日志"}`;
 
       elements.syncResult.textContent = resultText;
     } else {
@@ -457,7 +478,7 @@ async function handleConfirmImport() {
 
   try {
     let response;
-    
+
     if (shareToken) {
       // 使用新的 token 导入接口
       response = await importByToken(shareToken);
@@ -555,6 +576,65 @@ async function checkAuthAndShowView() {
   }
 }
 
+// ========== 选择对话框 ==========
+function showChoiceDialog(bundleName) {
+  elements.choiceBundleName.textContent = bundleName;
+  elements.choiceDialog.classList.add("show");
+}
+
+function hideChoiceDialog() {
+  elements.choiceDialog.classList.remove("show");
+  existingBundle = null;
+}
+
+async function handleQuickUpdate() {
+  if (!existingBundle || !uploadData) return;
+
+  // 禁用按钮
+  elements.btnChoiceUpdate.disabled = true;
+  elements.btnChoiceUpdate.textContent = "更新中...";
+
+  try {
+    const response = await send({
+      type: "quick-update",
+      bundleId: existingBundle.id,
+      ...uploadData
+    });
+
+    if (response.ok) {
+      const savedBundle = existingBundle;
+      hideChoiceDialog();
+
+      const resultText = `✅ 更新成功！\n\n` +
+        `📦 名称：${savedBundle.name}\n` +
+        `⏰ 更新时间：${new Date().toLocaleString("zh-CN")}\n` +
+        `💡 提示：Cookie 和 Storage 已更新，有效期已延长`;
+      elements.uploadResult.textContent = resultText;
+
+      // 刷新列表并选中更新的 Bundle
+      await loadBundleList();
+      setTimeout(() => {
+        elements.bundleSelect.value = savedBundle.id;
+      }, 500);
+    } else {
+      alert(`更新失败：${response.error}`);
+      elements.btnChoiceUpdate.disabled = false;
+      elements.btnChoiceUpdate.textContent = "🔄 更新现有 (推荐)";
+    }
+  } catch (error) {
+    console.error("Quick update error:", error);
+    alert(`更新异常：${error.message || "未知错误"}`);
+    elements.btnChoiceUpdate.disabled = false;
+    elements.btnChoiceUpdate.textContent = "🔄 更新现有 (推荐)";
+  }
+}
+
+function handleChoiceNew() {
+  hideChoiceDialog();
+  // 继续常规流程
+  continueUploadProcess(uploadData.host, uploadData.cookies);
+}
+
 // ========== 绑定事件 ==========
 function bindEvents() {
   // 登录视图
@@ -580,6 +660,13 @@ function bindEvents() {
   // 导入对话框
   elements.btnCancelImport.addEventListener("click", hideImportDialog);
   elements.btnConfirmImport.addEventListener("click", handleConfirmImport);
+
+  // 选择对话框
+  if (elements.choiceDialog) {
+    elements.btnChoiceUpdate.addEventListener("click", handleQuickUpdate);
+    elements.btnChoiceNew.addEventListener("click", handleChoiceNew);
+    elements.btnChoiceCancel.addEventListener("click", hideChoiceDialog);
+  }
 }
 
 // ========== 初始化 ==========
@@ -624,6 +711,13 @@ async function init() {
     importInput: document.getElementById("import-input"),
     btnCancelImport: document.getElementById("btn-cancel-import"),
     btnConfirmImport: document.getElementById("btn-confirm-import"),
+
+    // 选择对话框
+    choiceDialog: document.getElementById("choice-dialog"),
+    choiceBundleName: document.getElementById("choice-bundle-name"),
+    btnChoiceUpdate: document.getElementById("btn-choice-update"),
+    btnChoiceNew: document.getElementById("btn-choice-new"),
+    btnChoiceCancel: document.getElementById("btn-choice-cancel"),
   };
 
   // 绑定事件

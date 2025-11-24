@@ -969,6 +969,58 @@ public class BundleService {
     }
 
     /**
+     * 根据 Host 查找用户的所有 Bundle
+     *
+     * @param userId 用户ID
+     * @param host   Host
+     * @return Bundle 列表
+     */
+    public java.util.List<CookieBundle> findBundlesByHost(String userId, String host) {
+        long now = System.currentTimeMillis();
+        return mapper.selectListByQuery(
+                com.mybatisflex.core.query.QueryWrapper.create()
+                        .where(COOKIE_BUNDLE.OWNER_ID.eq(userId))
+                        .and(COOKIE_BUNDLE.HOST.eq(host))
+                        .and(COOKIE_BUNDLE.EXPIRE_AT.gt(now))
+                        .orderBy(COOKIE_BUNDLE.UPDATED_AT.desc())
+        );
+    }
+
+    /**
+     * 更新 Bundle 的 Payload (快速更新)
+     *
+     * @param userId      用户ID
+     * @param bundleId    Bundle ID
+     * @param jsonPayload 新的 Payload
+     * @param expireDays  有效天数 (可选，如果不传则默认延长7天)
+     * @return 是否成功
+     */
+    @Transactional
+    public boolean updateBundlePayload(String userId, String bundleId, String jsonPayload, Integer expireDays) {
+        // 1. 查询Bundle
+        CookieBundle bundle = mapper.selectOneById(bundleId);
+        if (bundle == null) {
+            throw new IllegalArgumentException("Bundle不存在");
+        }
+
+        // 2. 检查所有权
+        if (!userId.equals(bundle.ownerId)) {
+            throw new IllegalArgumentException("无权修改该Bundle");
+        }
+
+        // 3. 更新 Payload
+        bundle.payload = crypto.encrypt(jsonPayload);
+        bundle.updatedAt = System.currentTimeMillis();
+
+        // 4. 更新过期时间
+        int days = (expireDays != null && expireDays > 0 && expireDays <= 365) ? expireDays : 7;
+        bundle.expireAt = System.currentTimeMillis() + (long) days * 24 * 3600 * 1000;
+
+        mapper.update(bundle);
+        return true;
+    }
+
+    /**
      * 生成分享令牌
      */
     private String generateShareToken() {

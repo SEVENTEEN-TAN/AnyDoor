@@ -125,6 +125,7 @@ public class BundleController {
         else if (service.hasReference(userId, b.id)) {
             hasAccess = true;
         }
+        // 3. 如果是PUBLIC，所有登录用户都有权限
         else if ("PUBLIC".equals(b.shareMode)) {
             hasAccess = true;
         }
@@ -195,8 +196,8 @@ public class BundleController {
             return ResponseEntity.badRequest().body(Map.of("error", "shareMode 不能为空"));
         }
 
-        if (!"GROUP_ONLY".equals(req.shareMode()) && !"PRIVATE".equals(req.shareMode()) && !"PUBLIC".equals(req.shareMode())) {
-            return ResponseEntity.badRequest().body(Map.of("error", "分享模式只能是 GROUP_ONLY, PRIVATE 或 PUBLIC"));
+        if (!"PRIVATE".equals(req.shareMode()) && !"GROUP_ONLY".equals(req.shareMode()) && !"PUBLIC".equals(req.shareMode())) {
+            return ResponseEntity.badRequest().body(Map.of("error", "分享模式只能是 PRIVATE, GROUP_ONLY 或 PUBLIC"));
         }
 
         boolean success = service.updateShareMode(userId, req.bundleId(), req.shareMode());
@@ -304,7 +305,8 @@ public class BundleController {
         else if (service.hasReference(userId, bundle.id)) {
             hasAccess = true;
         }
-        else if ("GLOBAL".equals(bundle.shareMode)) {
+        // 3. 如果是PUBLIC，所有登录用户都有权限
+        else if ("PUBLIC".equals(bundle.shareMode)) {
             hasAccess = true;
         }
         // 4. 如果是GROUP_ONLY，需要检查是否在同一组

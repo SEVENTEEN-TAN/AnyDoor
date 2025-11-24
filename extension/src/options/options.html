@@ -1,0 +1,1293 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>AnyDoor - 设置</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: #f9fafb;
+        color: #333;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      /* 头部 */
+      .header {
+        background: white;
+        padding: 24px;
+        border-radius: 12px;
+        margin-bottom: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .header-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: #1f2937;
+      }
+
+      .header-user {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .user-info {
+        font-size: 14px;
+        color: #6b7280;
+      }
+
+      .btn-logout {
+        padding: 8px 16px;
+        background: #ef4444;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .btn-logout:hover {
+        background: #dc2626;
+      }
+
+      /* Tab 导航 */
+      .tabs {
+        background: white;
+        padding: 0 24px;
+        border-radius: 12px 12px 0 0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        display: flex;
+        gap: 8px;
+      }
+
+      .tab-button {
+        padding: 16px 24px;
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid transparent;
+        font-size: 14px;
+        font-weight: 500;
+        color: #6b7280;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .tab-button:hover {
+        color: #4f46e5;
+      }
+
+      .tab-button.active {
+        color: #4f46e5;
+        border-bottom-color: #4f46e5;
+      }
+
+      /* Tab 内容 */
+      .tab-content {
+        background: white;
+        padding: 24px;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        min-height: 500px;
+      }
+
+      .tab-pane {
+        display: none;
+      }
+
+      .tab-pane.active {
+        display: block;
+      }
+
+      /* 表单样式 */
+      .form-section {
+        margin-bottom: 32px;
+      }
+
+      .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #e5e7eb;
+      }
+
+      .form-group {
+        margin-bottom: 16px;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 8px;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: border-color 0.2s;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #4f46e5;
+      }
+
+      .form-group small {
+        display: block;
+        margin-top: 4px;
+        font-size: 12px;
+        color: #6b7280;
+      }
+
+      /* 按钮 */
+      .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .btn-primary {
+        background: #4f46e5;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #4338ca;
+      }
+
+      .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+      }
+
+      .btn-secondary:hover {
+        background: #e5e7eb;
+      }
+
+      .btn-danger {
+        background: #ef4444;
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #dc2626;
+      }
+
+      .btn-success {
+        background: #10b981;
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: #059669;
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      /* 站点列表（表格） */
+      .site-table-container {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        overflow: hidden;
+        background: white;
+      }
+
+      .site-table-wrapper {
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .site-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .site-table thead {
+        position: sticky;
+        top: 0;
+        background: #f9fafb;
+        z-index: 10;
+      }
+
+      .site-table th {
+        text-align: left;
+        padding: 12px;
+        border-bottom: 2px solid #e5e7eb;
+        font-size: 13px;
+        font-weight: 600;
+        color: #6b7280;
+        white-space: nowrap;
+      }
+
+      .site-table td {
+        padding: 12px;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 14px;
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .site-table td.col-name {
+        font-weight: 500;
+        color: #1f2937;
+        max-width: 250px;
+      }
+
+      .site-table td.col-host {
+        color: #6b7280;
+        max-width: 200px;
+      }
+
+      .site-table td.col-expire {
+        color: #6b7280;
+        max-width: 180px;
+      }
+
+      .site-table td.col-share {
+        max-width: 150px;
+      }
+
+      .site-table td.col-actions {
+        white-space: nowrap;
+        max-width: none;
+      }
+
+      .site-table tr:hover {
+        background: #f9fafb;
+      }
+
+      .site-table tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      /* Tooltip for truncated content */
+      .site-table td[title]:hover {
+        cursor: help;
+        position: relative;
+      }
+
+      .site-badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        display: inline-block;
+      }
+
+      .badge-owner {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+
+      .badge-imported {
+        background: #d1fae5;
+        color: #065f46;
+      }
+
+      .badge-public {
+        background: #fef3c7;
+        color: #92400e;
+      }
+
+      .btn-small {
+        padding: 6px 12px;
+        font-size: 12px;
+        margin-right: 4px;
+      }
+
+      .btn-small:last-child {
+        margin-right: 0;
+      }
+
+      .share-mode-select,
+      .group-select {
+        width: 100%;
+        padding: 6px 8px;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        font-size: 12px;
+        background: white;
+        cursor: pointer;
+      }
+
+      .share-mode-select:focus,
+      .group-select:focus {
+        outline: none;
+        border-color: #4f46e5;
+      }
+
+      .group-select:disabled,
+      .share-mode-select:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      /* 消息提示 */
+      .message {
+        padding: 12px 16px;
+        border-radius: 6px;
+        margin-bottom: 16px;
+        display: none;
+      }
+
+      .message.show {
+        display: block;
+      }
+
+      .message.success {
+        background: #d1fae5;
+        color: #065f46;
+      }
+
+      .message.error {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+
+      .message.info {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+
+      /* 空状态 */
+      .empty-state {
+        text-align: center;
+        padding: 48px 24px;
+        color: #9ca3af;
+      }
+
+      .empty-icon {
+        font-size: 64px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+      }
+
+      .empty-text {
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
+
+      .empty-hint {
+        font-size: 14px;
+      }
+
+      /* 表格 */
+      .table-container {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th {
+        text-align: left;
+        padding: 12px;
+        background: #f9fafb;
+        border-bottom: 2px solid #e5e7eb;
+        font-size: 13px;
+        font-weight: 600;
+        color: #6b7280;
+      }
+
+      td {
+        padding: 12px;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 14px;
+      }
+
+      tr:hover {
+        background: #f9fafb;
+      }
+
+      /* 对话框 */
+      .dialog-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .dialog-overlay.show {
+        display: flex;
+      }
+
+      .dialog {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        width: 90%;
+        max-width: 500px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      }
+
+      .dialog-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 20px;
+      }
+
+      .dialog-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+        justify-content: flex-end;
+      }
+
+      .dialog-actions .btn {
+        flex: 1;
+      }
+
+      /* 分享管理样式 */
+      .status-active {
+        color: #10b981;
+        font-weight: 500;
+      }
+
+      .status-revoked {
+        color: #ef4444;
+        font-weight: 500;
+      }
+
+      #share-list input[readonly] {
+        border: 1px solid #e5e7eb;
+        padding: 6px 8px;
+        border-radius: 4px;
+        background: #f9fafb;
+        font-size: 12px;
+        font-family: monospace;
+      }
+
+      /* Toast 提示动画 */
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideOut {
+        from {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+      }
+
+      /* 加载动画 */
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Toast 样式 */
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 24px;
+        border-radius: 6px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 10000;
+        font-weight: 500;
+        animation: slideIn 0.3s ease-out;
+      }
+
+      .toast-success {
+        background: #10b981;
+        color: white;
+      }
+
+      .toast-error {
+        background: #ef4444;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- 头部 -->
+      <div class="header">
+        <div class="header-title">🚪 AnyDoor 设置</div>
+        <div class="header-user">
+          <span class="user-info" id="user-info">未登录</span>
+          <button class="btn-logout" id="btn-logout">退出登录</button>
+        </div>
+      </div>
+
+      <!-- Tab 导航 -->
+      <div class="tabs">
+        <button class="tab-button active" data-tab="sites">📦 站点管理</button>
+        <button class="tab-button" data-tab="account" id="tab-account-btn">👤 账号管理</button>
+        <button class="tab-button" data-tab="groups" id="tab-groups-btn">👥 组管理</button>
+        <button class="tab-button" data-tab="admin" id="tab-admin-btn" style="display: none;">🛡️ 全局管理</button>
+      </div>
+
+      <!-- Tab 内容 -->
+      <div class="tab-content">
+        <!-- 站点管理 -->
+        <div class="tab-pane active" id="tab-sites">
+          <div class="form-section">
+            <div class="section-title">我的站点</div>
+            <div id="message-sites" class="message"></div>
+            <div class="site-table-container">
+              <div class="site-table-wrapper">
+                <table class="site-table">
+                  <thead>
+                    <tr>
+                      <th>名称</th>
+                      <th>站点</th>
+                      <th>所属组</th>
+                      <th>过期时间</th>
+                      <th>分享模式</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="my-sites-list">
+                    <!-- 动态生成 -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="section-title">已导入的站点</div>
+            <div class="site-table-container">
+              <div class="site-table-wrapper">
+                <table class="site-table">
+                  <thead>
+                    <tr>
+                      <th>名称</th>
+                      <th>站点</th>
+                      <th>所有者</th>
+                      <th>过期时间</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="imported-sites-list">
+                    <!-- 动态生成 -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 账号管理 -->
+        <div class="tab-pane" id="tab-account">
+          <div class="form-section">
+            <div class="section-title">修改密码</div>
+            <div id="message-password" class="message"></div>
+            <div class="form-group">
+              <label>当前密码</label>
+              <input type="password" id="current-password" placeholder="请输入当前密码" />
+            </div>
+            <div class="form-group">
+              <label>新密码</label>
+              <input type="password" id="new-password" placeholder="请输入新密码（至少6位）" />
+            </div>
+            <div class="form-group">
+              <label>确认新密码</label>
+              <input type="password" id="confirm-password" placeholder="再次输入新密码" />
+            </div>
+            <button class="btn btn-primary" id="btn-change-password">修改密码</button>
+          </div>
+
+          <div class="form-section">
+            <div class="section-title">子账号管理</div>
+            <div id="message-subaccounts" class="message"></div>
+            <button class="btn btn-success" id="btn-create-subaccount">创建子账号</button>
+            <div class="table-container" style="margin-top: 16px;">
+              <table id="subaccounts-table">
+                <thead>
+                  <tr>
+                    <th>用户名</th>
+                    <th>所属组</th>
+                    <th>创建时间</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="subaccounts-list">
+                  <!-- 动态生成 -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 组管理 -->
+        <div class="tab-pane" id="tab-groups">
+          <div class="form-section">
+            <div class="section-title">我的组</div>
+            <div id="message-groups" class="message"></div>
+            <button class="btn btn-success" id="btn-create-group">创建新组</button>
+            <div class="site-table-container" style="margin-top: 16px;">
+              <div class="site-table-wrapper">
+                <table class="site-table">
+                  <thead>
+                    <tr>
+                      <th>组名称</th>
+                      <th>描述</th>
+                      <th>成员数</th>
+                      <th>共享站点</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="groups-list">
+                    <!-- 动态生成 -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 全局管理（仅管理员） -->
+        <div class="tab-pane" id="tab-admin">
+          <!-- 系统维护 -->
+          <div class="form-section">
+            <div class="section-title">系统维护</div>
+            <div id="message-cache-cleanup" class="message"></div>
+            <button class="btn btn-warning" id="btn-cache-cleanup">🧹 清理系统缓存</button>
+            <p style="color: #6b7280; font-size: 14px; margin-top: 8px;">
+              清理没有关联的孤立数据（站点/用户/组）
+            </p>
+          </div>
+
+          <!-- 用户列表视图 -->
+          <div id="admin-list-view" class="form-section">
+            <div class="section-title">所有主账号</div>
+            <div id="message-admin" class="message"></div>
+            <button class="btn btn-success" id="btn-create-main-account">创建主账号</button>
+            <div class="site-table-container" style="margin-top: 16px;">
+              <div class="site-table-wrapper">
+                <table class="site-table">
+                  <thead>
+                    <tr>
+                      <th>用户名</th>
+                      <th>邮箱</th>
+                      <th>角色</th>
+                      <th>状态</th>
+                      <th>创建时间</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-users-list">
+                    <!-- 动态生成 -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- 用户详情视图 -->
+          <div id="admin-detail-view" style="display: none;">
+            <!-- 返回按钮和用户标识 -->
+            <div style="background: white; padding: 20px 24px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+              <div style="display: flex; align-items: center;">
+                <button class="btn btn-secondary" id="btn-back-to-list" style="margin-right: 16px;">
+                  ← 返回列表
+                </button>
+                <div style="flex: 1;">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <span id="detail-user-name" style="font-size: 20px; font-weight: 600; color: #1f2937;">用户名</span>
+                    <span id="detail-user-role" style="font-size: 13px; padding: 4px 10px; border-radius: 12px; background: #e0e7ff; color: #4338ca; font-weight: 500;"></span>
+                  </div>
+                  <div style="font-size: 13px; color: #9ca3af; margin-top: 4px;">
+                    <span id="detail-user-id"></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 基本信息卡片 -->
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 16px;">
+                <div style="background: #f9fafb; padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb;">
+                  <div style="font-size: 11px; color: #6b7280; margin-bottom: 4px;">📧 邮箱</div>
+                  <div style="font-size: 13px; font-weight: 500;" id="detail-user-email">-</div>
+                </div>
+                <div style="background: #f9fafb; padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb;">
+                  <div style="font-size: 11px; color: #6b7280; margin-bottom: 4px;">📊 状态</div>
+                  <div style="font-size: 13px; font-weight: 500;" id="detail-user-status">-</div>
+                </div>
+                <div style="background: #f9fafb; padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb;">
+                  <div style="font-size: 11px; color: #6b7280; margin-bottom: 4px;">📅 创建时间</div>
+                  <div style="font-size: 13px; font-weight: 500;" id="detail-user-created">-</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 12px; border-radius: 8px; color: white;">
+                  <div style="font-size: 11px; opacity: 0.9; margin-bottom: 4px;">📦 Bundle数</div>
+                  <div style="font-size: 20px; font-weight: 600;" id="detail-bundle-count">0</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 12px; border-radius: 8px; color: white;">
+                  <div style="font-size: 11px; opacity: 0.9; margin-bottom: 4px;">👥 成员数</div>
+                  <div style="font-size: 20px; font-weight: 600;" id="detail-member-count">0</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 导航 -->
+            <div class="tabs detail-tabs" style="margin-bottom: 0;">
+              <button class="tab-button detail-tab-button active" data-detail-tab="bundles">📦 站点管理</button>
+              <button class="tab-button detail-tab-button" data-detail-tab="accounts">👤 账号管理</button>
+              <button class="tab-button detail-tab-button" data-detail-tab="groups">👥 组管理</button>
+            </div>
+
+            <!-- Tab 内容 -->
+            <div class="tab-content detail-tab-content">
+              <div id="message-admin-detail" class="message"></div>
+
+              <!-- 站点管理 Tab -->
+              <div class="tab-pane detail-tab-pane active" id="detail-tab-bundles">
+                <div class="form-section">
+                  <div class="section-title">用户的站点</div>
+                  <div class="site-table-container">
+                    <div class="site-table-wrapper">
+                      <table class="site-table">
+                        <thead>
+                          <tr>
+                            <th>名称</th>
+                            <th>站点</th>
+                            <th>分享模式</th>
+                            <th>过期时间</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                          </tr>
+                        </thead>
+                        <tbody id="detail-bundles-list">
+                          <tr>
+                            <td colspan="6" style="text-align: center; padding: 24px; color: #9ca3af;">
+                              加载中...
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 账号管理 Tab -->
+              <div class="tab-pane detail-tab-pane" id="detail-tab-accounts">
+                <div class="form-section">
+                  <div class="section-title">子账号列表</div>
+                  <div class="table-container">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>用户名</th>
+                          <th>创建时间</th>
+                          <th>状态</th>
+                          <th>操作</th>
+                        </tr>
+                      </thead>
+                      <tbody id="detail-subaccounts-list">
+                        <tr>
+                          <td colspan="4" style="text-align: center; padding: 24px; color: #9ca3af;">
+                            加载中...
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 组管理 Tab -->
+              <div class="tab-pane detail-tab-pane" id="detail-tab-groups">
+                <div class="form-section">
+                  <div class="section-title">用户的组</div>
+                  <div class="site-table-container">
+                    <div class="site-table-wrapper">
+                      <table class="site-table">
+                        <thead>
+                          <tr>
+                            <th>组名称</th>
+                            <th>描述</th>
+                            <th>成员数</th>
+                            <th>共享站点</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                          </tr>
+                        </thead>
+                        <tbody id="detail-groups-list">
+                          <tr>
+                            <td colspan="6" style="text-align: center; padding: 24px; color: #9ca3af;">
+                              加载中...
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 创建子账号对话框 -->
+    <div class="dialog-overlay" id="subaccount-dialog">
+      <div class="dialog">
+        <h3 class="dialog-title">👤 创建子账号</h3>
+        <div class="form-group">
+          <label>用户名</label>
+          <input type="text" id="subaccount-username" placeholder="请输入用户名" />
+        </div>
+        <div class="form-group">
+          <label>密码</label>
+          <input type="password" id="subaccount-password" placeholder="请输入密码（至少6位）" />
+        </div>
+        <div class="form-group">
+          <label>所属组</label>
+          <select id="subaccount-group">
+            <option value="">默认组</option>
+          </select>
+          <small>选择子账号所属的组，默认为您的默认组</small>
+        </div>
+        <div class="dialog-actions">
+          <button class="btn btn-secondary" id="btn-cancel-subaccount">取消</button>
+          <button class="btn btn-primary" id="btn-confirm-subaccount">创建</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 编辑子账号对话框 -->
+    <div class="dialog-overlay" id="edit-subaccount-dialog">
+      <div class="dialog">
+        <h3 class="dialog-title">✏️ 编辑子账号</h3>
+        <input type="hidden" id="edit-subaccount-id" />
+        <div class="form-group">
+          <label>新密码（可选）</label>
+          <input type="password" id="edit-subaccount-password" placeholder="留空则不修改密码" />
+          <small>至少6位，留空则不修改</small>
+        </div>
+        <div class="form-group">
+          <label>所属组</label>
+          <select id="edit-subaccount-group">
+          </select>
+          <small>选择子账号的所属组</small>
+        </div>
+        <div class="dialog-actions">
+          <button class="btn btn-secondary" id="btn-cancel-edit-subaccount">取消</button>
+          <button class="btn btn-primary" id="btn-confirm-edit-subaccount">保存</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 创建组对话框 -->
+    <div class="dialog-overlay" id="group-dialog">
+      <div class="dialog">
+        <h3 class="dialog-title">👥 创建新组</h3>
+        <div class="form-group">
+          <label>组名称</label>
+          <input type="text" id="group-name" placeholder="请输入组名称" />
+        </div>
+        <div class="form-group">
+          <label>组描述（可选）</label>
+          <textarea id="group-description" rows="3" placeholder="简单描述这个组的用途"></textarea>
+        </div>
+        <div class="dialog-actions">
+          <button class="btn btn-secondary" id="btn-cancel-group">取消</button>
+          <button class="btn btn-primary" id="btn-confirm-group">创建</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 编辑组对话框 -->
+    <div class="dialog-overlay" id="edit-group-dialog">
+      <div class="dialog">
+        <h3 class="dialog-title">✏️ 编辑组信息</h3>
+        <input type="hidden" id="edit-group-id" />
+        <div class="form-group">
+          <label>组名称 *</label>
+          <input type="text" id="edit-group-name" placeholder="请输入组名称" />
+        </div>
+        <div class="form-group">
+          <label>组描述</label>
+          <textarea id="edit-group-description" rows="3" placeholder="简单描述这个组的用途"></textarea>
+        </div>
+        <div class="dialog-actions">
+          <button class="btn btn-secondary" id="btn-cancel-edit-group">取消</button>
+          <button class="btn btn-primary" id="btn-confirm-edit-group">保存</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 删除组确认对话框 -->
+    <div class="dialog-overlay" id="delete-group-dialog">
+      <div class="dialog">
+        <h3 class="dialog-title">⚠️ 确认删除组</h3>
+        <input type="hidden" id="delete-group-id" />
+        <p style="margin-bottom: 16px;">确定要删除组 "<strong id="delete-group-name"></strong>" 吗？</p>
+        <div style="padding: 16px; background: #fef3c7; border-radius: 8px; border: 1px solid #fbbf24; margin-bottom: 16px;">
+          <p style="margin: 0 0 8px 0; font-weight: 600; color: #92400e;">⚠️ 警告</p>
+          <p style="margin: 0 0 8px 0; font-size: 14px; color: #92400e;">
+            该组有 <strong id="delete-member-count">0</strong> 个成员。
+          </p>
+          <p style="margin: 0; font-size: 14px; color: #92400e;">
+            删除后：<br/>
+            • 所有成员将被移除<br/>
+            • 组内 Bundle 将转为私有<br/>
+            • 此操作不可恢复
+          </p>
+        </div>
+        <div class="dialog-actions">
+          <button class="btn btn-secondary" id="btn-cancel-delete-group">取消</button>
+          <button class="btn btn-danger" id="btn-confirm-delete-group">确认删除</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 组管理对话框 -->
+    <div class="dialog-overlay" id="manage-group-dialog">
+      <div class="dialog" style="max-width: 800px;">
+        <h3 class="dialog-title">⚙️ 管理组：<span id="manage-group-name"></span></h3>
+        <input type="hidden" id="manage-group-id" />
+        
+        <!-- Tab 导航 -->
+        <div style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid #e5e7eb;">
+          <button class="tab-button active" data-manage-tab="members" style="border: none; border-bottom: 2px solid transparent; background: transparent;">👥 成员管理</button>
+          <button class="tab-button" data-manage-tab="bundles" style="border: none; border-bottom: 2px solid transparent; background: transparent;">📦 站点管理</button>
+        </div>
+
+        <!-- 成员管理 Tab -->
+        <div class="manage-tab-pane active" id="manage-tab-members">
+          <div style="margin-bottom: 16px;">
+            <button class="btn btn-success btn-small" id="btn-add-member">➕ 添加成员</button>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>用户名</th>
+                  <th>角色</th>
+                  <th>加入时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="manage-members-list">
+                <tr>
+                  <td colspan="4" style="text-align: center; padding: 24px; color: #9ca3af;">加载中...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 站点管理 Tab -->
+        <div class="manage-tab-pane" id="manage-tab-bundles" style="display: none;">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>名称</th>
+                  <th>站点</th>
+                  <th>所有者</th>
+                  <th>过期时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="manage-bundles-list">
+                <tr>
+                  <td colspan="5" style="text-align: center; padding: 24px; color: #9ca3af;">加载中...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="dialog-actions">
+          <button class="btn btn-secondary" id="btn-close-manage-group">关闭</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 添加成员对话框 -->
+    <div class="dialog-overlay" id="add-member-dialog">
+      <div class="dialog">
+        <h3 class="dialog-title">➕ 添加成员</h3>
+        <input type="hidden" id="add-member-group-id" />
+        <div class="form-group">
+          <label>用户名</label>
+          <input type="text" id="add-member-username" placeholder="请输入用户名" />
+        </div>
+        <div class="form-group">
+          <label>角色</label>
+          <select id="add-member-role">
+            <option value="MEMBER">成员</option>
+            <option value="ADMIN">管理员</option>
+          </select>
+        </div>
+        <div class="dialog-actions">
+          <button class="btn btn-secondary" id="btn-cancel-add-member">取消</button>
+          <button class="btn btn-primary" id="btn-confirm-add-member">添加</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 创建主账号对话框（仅管理员） -->
+    <div class="dialog-overlay" id="main-account-dialog">
+      <div class="dialog">
+        <h3 class="dialog-title">🛡️ 创建主账号</h3>
+        <div class="form-group">
+          <label>用户名</label>
+          <input type="text" id="main-account-username" placeholder="请输入用户名" />
+        </div>
+        <div class="form-group">
+          <label>密码</label>
+          <input type="password" id="main-account-password" placeholder="请输入密码（至少6位）" />
+        </div>
+        <div class="form-group">
+          <label>邮箱（可选）</label>
+          <input type="email" id="main-account-email" placeholder="请输入邮箱" />
+        </div>
+        <div class="dialog-actions">
+          <button class="btn btn-secondary" id="btn-cancel-main-account">取消</button>
+          <button class="btn btn-primary" id="btn-confirm-main-account">创建</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 清理缓存确认对话框（仅管理员） -->
+    <div class="dialog-overlay" id="cache-cleanup-dialog">
+      <div class="dialog">
+        <h3 class="dialog-title">🧹 清理系统缓存</h3>
+        <div id="cleanup-preview" style="margin: 16px 0;">
+          <p>将要删除以下孤立数据：</p>
+          <ul style="list-style: none; padding: 0; margin: 12px 0;">
+            <li style="padding: 8px 0;">📦 孤立站点: <strong id="orphaned-sites-count">-</strong> 个</li>
+            <li style="padding: 8px 0;">👤 孤立用户: <strong id="orphaned-users-count">-</strong> 个</li>
+            <li style="padding: 8px 0;">👥 孤立组: <strong id="orphaned-groups-count">-</strong> 个</li>
+          </ul>
+          <p style="color: #ef4444; font-weight: bold; margin-top: 16px;">
+            ⚠️ 此操作不可撤销！
+          </p>
+        </div>
+        <div class="dialog-actions">
+          <button class="btn btn-secondary" id="btn-cancel-cleanup">取消</button>
+          <button class="btn btn-danger" id="btn-confirm-cleanup">确认清理</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bundle详情对话框 -->
+    <div class="dialog-overlay" id="detail-dialog">
+      <div class="dialog">
+        <h3 class="dialog-title">📦 Bundle详情</h3>
+        <div class="form-group">
+          <label>Bundle ID</label>
+          <div style="padding: 8px 12px; background: #f3f4f6; border-radius: 4px; font-family: monospace; font-size: 12px; word-break: break-all;" id="detail-id"></div>
+        </div>
+        <div class="form-group">
+          <label>名称</label>
+          <div style="padding: 8px 12px; background: #f3f4f6; border-radius: 4px;" id="detail-name"></div>
+        </div>
+        <div class="form-group">
+          <label>站点</label>
+          <div style="padding: 8px 12px; background: #f3f4f6; border-radius: 4px;" id="detail-host"></div>
+        </div>
+        <div class="form-group">
+          <label>分享模式</label>
+          <div style="padding: 8px 12px; background: #f3f4f6; border-radius: 4px;" id="detail-share-mode"></div>
+        </div>
+        <div class="form-group">
+          <label>描述</label>
+          <div style="padding: 8px 12px; background: #f3f4f6; border-radius: 4px; min-height: 60px;" id="detail-description"></div>
+        </div>
+        <div class="form-group">
+          <label>标签</label>
+          <div style="padding: 8px 12px; background: #f3f4f6; border-radius: 4px;" id="detail-tags"></div>
+        </div>
+        <div class="form-group">
+          <label>创建时间</label>
+          <div style="padding: 8px 12px; background: #f3f4f6; border-radius: 4px;" id="detail-created-at"></div>
+        </div>
+        <div class="form-group">
+          <label>过期时间</label>
+          <div style="padding: 8px 12px; background: #f3f4f6; border-radius: 4px;" id="detail-expire-at"></div>
+        </div>
+        <div class="dialog-actions">
+          <button class="btn btn-primary" id="btn-close-detail">关闭</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bundle编辑对话框 -->
+    <div class="dialog-overlay" id="edit-dialog">
+      <div class="dialog">
+        <h3 class="dialog-title">✏️ 编辑Bundle</h3>
+        <input type="hidden" id="edit-bundle-id" />
+        <div class="form-group">
+          <label>Bundle名称 *</label>
+          <input type="text" id="edit-name" placeholder="请输入Bundle名称" />
+        </div>
+        <div class="form-group">
+          <label>描述</label>
+          <textarea id="edit-description" rows="3" placeholder="简单描述这个Bundle的用途"></textarea>
+        </div>
+        <div class="form-group">
+          <label>标签</label>
+          <input type="text" id="edit-tags" placeholder="多个标签用逗号分隔，如：开发,测试" />
+        </div>
+        <div class="form-group">
+          <label>分享模式</label>
+          <select id="edit-share-mode">
+            <option value="PRIVATE">🔐 私有</option>
+            <option value="GROUP_ONLY">🔒 仅组内</option>
+            <option value="PUBLIC">🌐 公开</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>所属组</label>
+          <select id="edit-group">
+            <option value="">默认组</option>
+          </select>
+          <small>选择Bundle所属的组，默认为您的默认组</small>
+        </div>
+        <div class="form-group">
+          <label>有效期（天）</label>
+          <input type="number" id="edit-expire" min="1" max="365" placeholder="1-365天" />
+          <small>剩余有效期，从现在开始计算</small>
+        </div>
+        <div class="dialog-actions">
+          <button class="btn btn-secondary" id="btn-cancel-edit">取消</button>
+          <button class="btn btn-primary" id="btn-confirm-edit">保存</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 分享管理对话框 -->
+    <div class="dialog-overlay" id="share-management-dialog">
+      <div class="dialog" style="max-width: 900px;">
+        <h3 class="dialog-title">🔗 分享管理：<span id="share-bundle-name"></span></h3>
+        <input type="hidden" id="share-bundle-id" />
+        
+        <div style="margin-bottom: 16px;">
+          <button class="btn btn-success btn-small" id="btn-create-share">➕ 创建分享链接</button>
+        </div>
+        
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 35%;">分享链接</th>
+                <th>创建时间</th>
+                <th>使用者</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="share-list">
+              <tr>
+                <td colspan="5" style="text-align: center; padding: 20px; color: #9ca3af;">
+                  暂无分享记录
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="dialog-actions">
+          <button class="btn btn-secondary" id="btn-close-share-dialog">关闭</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 查看分享使用者对话框 -->
+    <div class="dialog-overlay" id="share-users-dialog">
+      <div class="dialog" style="max-width: 700px;">
+        <h3 class="dialog-title">👥 分享使用者列表</h3>
+        <input type="hidden" id="current-share-id" />
+        
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>用户名</th>
+                <th>导入时间</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="share-users-list">
+              <tr>
+                <td colspan="4" style="text-align: center; padding: 20px; color: #9ca3af;">
+                  加载中...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="dialog-actions">
+          <button class="btn btn-secondary" id="btn-close-share-users-dialog">关闭</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./options.js"></script>
+  </body>
+</html>

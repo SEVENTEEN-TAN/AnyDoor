@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "AnyDoor",
+  "version": "0.1.0",
+  "permissions": ["cookies", "storage", "tabs", "scripting"],
+  "background": {
+    "service_worker": "src/background/service_worker.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "AnyDoor",
+    "default_popup": "src/popup/popup.html"
+  },
+  "options_page": "src/options/options.html",
+  "host_permissions": [
+    "http://localhost:8080/*",
+    "<all_urls>"
+  ]
+}

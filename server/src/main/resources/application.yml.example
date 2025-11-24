@@ -1,0 +1,54 @@
+# 使用方法：
+# 1. 复制此文件为 application.yml
+# 2. 设置以下环境变量：
+#    - DB_HOST: 数据库主机地址
+#    - DB_PORT: 数据库端口（默认3306）
+#    - DB_NAME: 数据库名称
+#    - DB_USER: 数据库用户名
+#    - DB_PASS: 数据库密码
+# 3. 或直接在 application.yml 中填入实际值（不要提交到版本控制）
+
+server:
+  port: 8080
+
+sa-token:
+  token-name: satoken
+  timeout: 604800    # 7 天
+  is-concurrent: true
+  is-share: true
+  token-style: uuid
+
+logging:
+  level:
+    root: info
+
+spring:
+  sql:
+    init:
+      mode: always
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:AnyDoor}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: ${DB_USER:your_username}
+    password: ${DB_PASS:your_password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    druid:
+      url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:AnyDoor}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      username: ${DB_USER:your_username}
+      password: ${DB_PASS:your_password}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      initial-size: 3
+      max-active: 20
+      min-idle: 3
+      max-wait: 60000
+      validation-query: select 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      connection-init-sqls: SET NAMES utf8mb4
+      connection-properties: useUnicode=true;characterEncoding=utf-8
+
+mybatis-flex:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    print-banner: false

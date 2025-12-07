@@ -298,6 +298,8 @@ a:focus {
     cursor: pointer;
     border: none;
     text-decoration: none;
+    line-height: 1;
+    white-space: nowrap;
 }
 
 .btn-primary {
@@ -391,7 +393,7 @@ a:focus {
 
 /* 通用区域 */
 .container {
-    max-width: 1280px;
+    max-width: 1440px;
     margin: 0 auto;
     padding: 0 var(--spacing-xl);
 }
@@ -615,6 +617,134 @@ a:focus {
     justify-content: center;
 }
 
+
+/* 价格区域 */
+.pricing {
+    padding: 120px 0;
+    background: var(--color-bg);
+}
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-xl);
+}
+
+.plan-card {
+    padding: var(--spacing-2xl);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-xl);
+    transition: all var(--transition-base);
+}
+
+.plan-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(59, 130, 246, 0.25);
+    box-shadow: var(--shadow-xl);
+}
+
+.plan-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-lg);
+}
+
+.plan-name {
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.plan-price {
+    font-size: 1.25rem;
+    color: var(--color-text-secondary);
+}
+
+.plan-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+    color: var(--color-text-secondary);
+}
+
+.plan-cta {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+.plan-cta .btn {
+    justify-content: center;
+    min-width: 160px;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.pricing-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.pricing-table thead th {
+    background: rgba(59, 130, 246, 0.10);
+    color: var(--color-text-primary);
+    font-weight: 700;
+}
+
+.pricing-table th,
+.pricing-table td {
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+}
+
+.pricing-table td:first-child,
+.pricing-table th:first-child {
+    text-align: left;
+    color: var(--color-text-primary);
+}
+
+.pricing-table tbody tr:nth-child(odd) {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.pricing-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.pricing-table .plan-header-cell {
+    color: var(--color-text-primary);
+}
+
+.pricing-table .price-badge {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    font-size: inherit;
+    color: var(--color-text-secondary);
+}
+
+.pricing-table .cell-cta {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+}
+
+.pricing-table .cell-cta .btn {
+    min-width: 140px;
+}
+
 /* 页脚 */
 .footer {
     padding: 80px 0 40px;
@@ -651,6 +781,11 @@ a:focus {
 .footer-social {
     display: flex;
     gap: var(--spacing-md);
+}
+
+.footer-social:empty,
+.footer-social:not(:has(a)) {
+    display: none;
 }
 
 .footer-social a {
@@ -747,6 +882,7 @@ a:focus {
     .footer-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+
 }
 
 @media (max-width: 768px) {
@@ -808,6 +944,15 @@ a:focus {
         flex-direction: column;
     }
 
+    .pricing-table th,
+    .pricing-table td {
+        padding: var(--spacing-md);
+    }
+
+    .plan-cta {
+        flex-direction: column;
+    }
+
     .footer-grid {
         grid-template-columns: 1fr;
         gap: var(--spacing-2xl);
@@ -839,11 +984,13 @@ a:focus {
 }
 
 .text-block {
-    max-width: 800px;
+    width: 80%;
+    max-width: none;
     margin: 0 auto;
     color: var(--color-text-secondary);
     line-height: 1.9;
 }
+
 
 .text-block h2,
 .text-block h3 {

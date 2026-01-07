@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0a0a0a">
+    <meta name="color-scheme" content="dark">
+    <title>AnyDoor - 文档</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="nav" id="navbar">
+        <div class="nav-content">
+            <a href="index.html" class="nav-logo">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>AnyDoor</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="index.html#features" class="nav-link">核心功能</a>
+                <a href="index.html#how-it-works" class="nav-link">工作原理</a>
+                <a href="docs.html" class="nav-link">文档</a>
+                <a href="download.html" class="nav-link">下载</a>
+                
+                <a href="download.html" class="btn-nav">立即开始</a>
+            </div>
+            <button class="nav-toggle" id="navToggle" aria-label="切换导航" aria-controls="navLinks" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <h1 class="hero-title fade-in">文档</h1>
+                <p class="section-subtitle">快速开始与 API 参考</p>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="container text-block fade-in delay-1">
+                <div class="card">
+                    <h2>安装指南</h2>
+                    <p>使用解压安装方式在浏览器中加载扩展：</p>
+                    <h3>Chrome</h3>
+                    <ol>
+                        <li>下载扩展压缩包并解压到本地目录。</li>
+                        <li>在地址栏输入 <code>chrome://extensions/</code> 打开扩展管理页。</li>
+                        <li>开启右上角的“开发者模式”。</li>
+                        <li>点击“加载已解压的扩展”，选择解压后的目录。</li>
+                    </ol>
+                    <h3>Edge</h3>
+                    <ol>
+                        <li>下载扩展压缩包并解压到本地目录。</li>
+                        <li>在地址栏输入 <code>edge://extensions/</code> 打开扩展管理页。</li>
+                        <li>开启“开发者模式”。</li>
+                        <li>点击“加载解压的扩展”，选择解压后的目录。</li>
+                    </ol>
+                    <p>完成后，浏览器工具栏将出现 AnyDoor 图标。</p>
+                </div>
+
+                <div class="card">
+                    <h2>使用指南</h2>
+                    <ol>
+                        <li>在需要保持登录状态的网站上，点击浏览器工具栏中的 AnyDoor 图标。</li>
+                        <li>在扩展内选择“捕获会话”，上传当前站点的登录状态与相关令牌。</li>
+                        <li>在另一台设备或浏览器中，按上述方式加载扩展后打开 AnyDoor。</li>
+                        <li>在扩展内选择对应会话并点击“同步”，刷新页面即可恢复登录状态。</li>
+                    </ol>
+                    <h3>常见操作</h3>
+                    <ul>
+                        <li>更新会话：在已登录页面再次执行“捕获会话”。</li>
+                        <li>删除会话：在扩展的会话列表中选择并删除不再需要的会话。</li>
+                        <li>暂停同步：在扩展设置中关闭同步开关即可临时停用。</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h2 id="api">API 参考</h2>
+                    <p>未来将提供公共 API 文档与示例代码，以便进行自动化与集成。</p>
+                </div>
+
+                <div class="card">
+                    <h2>快速开始（TL;DR）</h2>
+                    <ol>
+                        <li>安装扩展（商店或解压加载）。</li>
+                        <li>在登录完成的站点点击扩展图标 → 捕获会话。</li>
+                        <li>在另一设备安装扩展 → 选择会话 → 同步。</li>
+                    </ol>
+                </div>
+
+                <div class="card">
+                    <h2>安全实践</h2>
+                    <ul>
+                        <li>启用系统级登录保护（Windows Hello / Touch ID 等）。</li>
+                        <li>避免在不受信网络同步，优先使用受信环境。</li>
+                        <li>定期删除过期或不再使用的会话数据。</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h2>数据管理</h2>
+                    <ul>
+                        <li>导出：在扩展设置中导出会话数据（如可用）。</li>
+                        <li>删除：在会话列表中选择会话并执行删除。</li>
+                        <li>撤回：在设置中关闭同步并清除本地缓存。</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h2>常见问题（FAQ）</h2>
+                    <ul>
+                        <li><strong>同步后仍需重新登录？</strong> 部分站点启用设备绑定或多因子验证，需在目标设备完成额外验证流程。</li>
+                        <li><strong>同步速度变慢？</strong> 检查网络状况与扩展版本，建议在受信网络环境下使用并保持最新版本。</li>
+                        <li><strong>是否支持团队共享？</strong> 支持创建共享空间并设定权限，详见产品内“团队”功能（如您的套餐包含）。</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h2>故障排查</h2>
+                    <ul>
+                        <li>确认浏览器未安装拦截类插件影响存储访问。</li>
+                        <li>在隐私设置中允许扩展访问站点数据（如被限制）。</li>
+                        <li>清理目标站点缓存后重试同步与恢复。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2"/>
+                            <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2"/>
+                            <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <span>AnyDoor</span>
+                    </div>
+                    <p class="footer-desc">跨设备会话管理系统<br>让您的工作流程无缝衔接</p>
+                <div class="footer-social"></div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>产品</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html#features">核心功能</a></li>
+                        
+                        <li><a href="download.html">下载</a></li>
+                        <li><a href="changelog.html">更新日志</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>公司</h4>
+                    <ul class="footer-links">
+                        <li><a href="about.html">关于我们</a></li>
+                        <li><a href="privacy.html">隐私政策</a></li>
+                        <li><a href="terms.html">服务条款</a></li>
+                        <li><a href="contact.html">联系我们</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 AnyDoor. 保留所有权利。</p>
+                <p>使用 AnyDoor 即表示您同意我们的<a href="terms.html">服务条款</a>和<a href="privacy.html">隐私政策</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html>

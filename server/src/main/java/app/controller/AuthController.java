@@ -31,13 +31,15 @@ public class AuthController {
     private final BundleService bundleService;
     private final CaptchaService captchaService;
     private final app.service.CacheCleanupService cacheCleanupService;
+    private final app.service.LinuxDoAuthService linuxDoAuthService;
 
-    public AuthController(UserService userService, GroupService groupService, BundleService bundleService, CaptchaService captchaService, app.service.CacheCleanupService cacheCleanupService) {
+    public AuthController(UserService userService, GroupService groupService, BundleService bundleService, CaptchaService captchaService, app.service.CacheCleanupService cacheCleanupService, app.service.LinuxDoAuthService linuxDoAuthService) {
         this.userService = userService;
         this.groupService = groupService;
         this.bundleService = bundleService;
         this.captchaService = captchaService;
         this.cacheCleanupService = cacheCleanupService;
+        this.linuxDoAuthService = linuxDoAuthService;
     }
 
     public record LoginReq(String username, String password) {
@@ -1127,6 +1129,66 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "清理失败"));
         }
+    }
+
+    /**
+     * Linux.do OAuth 登录跳转
+     */
+    @GetMapping("/linuxdo/login")
+    public void linuxDoLogin(HttpServletResponse response) throws java.io.IOException {
+        String authorizeUrl = linuxDoAuthService.getAuthorizeUrl();
+        response.sendRedirect(authorizeUrl);
+    }
+
+    /**
+     * Linux.do OAuth 回调
+     */
+    @GetMapping("/linuxdo/callback")
+    public void linuxDoCallback(@RequestParam("code") String code, HttpServletResponse response) throws java.io.IOException {
+        if (code == null || code.isEmpty()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Code is missing");
+            return;
+        }
+
+        // 1. 换取 Token
+        String token = linuxDoAuthService.accessToken(code);
+        if (token == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Failed to get access token");
+            return;
+        }
+
+        // 2. 获取用户信息
+        com.fasterxml.jackson.databind.JsonNode userInfo = linuxDoAuthService.getUserInfo(token);
+        if (userInfo == null) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to get user info");
+            return;
+        }
+
+        String username = userInfo.has("username") ? userInfo.get("username").asText() : null;
+        String email = userInfo.has("email") ? userInfo.get("email").asText() : null;
+
+        if (username == null) {
+             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username missing in user info");
+             return;
+        }
+
+        // 3. 检查用户是否存在
+        Optional<User> userOpt = userService.getUserByUsername(username);
+        User user;
+
+        if (userOpt.isPresent()) {
+            user = userOpt.get();
+        } else {
+            // 4. 不存在则自动创建主账号
+            String randomPassword = java.util.UUID.randomUUID().toString();
+            user = userService.createMainAccountByAdmin(username, randomPassword, email);
+        }
+
+        // 5. 登录
+        StpUtil.login(user.id);
+
+        // 6. 重定向回首页
+        response.sendRedirect("/");
     }
 
     private static boolean isBlank(String s) {

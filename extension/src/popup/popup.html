@@ -150,9 +150,44 @@
       padding: 40px 30px;
     }
 
+    /* OAuth Button Styles */
+    .oauth-divider {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    .oauth-divider::before,
+    .oauth-divider::after {
+      content: "";
+      flex: 1;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .oauth-divider span {
+      padding: 0 10px;
+    }
+
+    .btn-linuxdo {
+      background-color: #f9fafb;
+      color: #111827;
+      border: 1px solid #e5e7eb;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-linuxdo:hover {
+      background-color: #f3f4f6;
+    }
+
     .link-text {
       text-align: center;
-      margin-top: 20px;
+      margin-top: 10px;
       font-size: 13px;
       color: #4f46e5;
       cursor: pointer;
@@ -482,6 +517,20 @@
     </div>
     <button id="btn-login" class="btn btn-primary">
       <span class="btn-text">登录</span>
+      <div class="spinner" style="display: none;"></div>
+    </button>
+
+    <div class="oauth-divider">
+      <span>或</span>
+    </div>
+
+    <button id="btn-linuxdo-login" class="btn btn-linuxdo">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path
+          d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"
+          stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      使用 LINUXDO 继续
     </button>
     <div class="link-text" id="link-to-register">没有账号？去注册</div>
   </div>

@@ -629,8 +629,9 @@ async function checkAuthAndShowView() {
       showView("login");
     }
   } catch (error) {
-    console.error("Auth check error:", error);
-
+    if (error.message !== "Not Login") {
+      console.error("Auth check error:", error);
+    }
     // 登录失败或未登录，显示登录视图
     showView("login");
 
@@ -726,6 +727,14 @@ function bindEvents() {
     elements.captchaImg.addEventListener("click", loadCaptcha);
   }
 
+  // Linux.do Login
+  if (elements.btnLinuxDo) {
+    elements.btnLinuxDo.addEventListener("click", () => {
+      chrome.tabs.create({ url: CONFIG.baseUrl + "/api/auth/linuxdo/login" });
+      window.close(); // Close popup to let user interact with tab
+    });
+  }
+
   // 功能视图
   elements.btnLogout.addEventListener("click", handleLogout);
   elements.btnSettings.addEventListener("click", handleOpenSettings);
@@ -762,6 +771,7 @@ async function init() {
     usernameInput: document.getElementById("username"),
     passwordInput: document.getElementById("password"),
     btnLogin: document.getElementById("btn-login"),
+    btnLinuxDo: document.getElementById("btn-linuxdo-login"), // Add Linux.do button
     loginMessage: document.getElementById("login-message"),
 
     // 注册视图

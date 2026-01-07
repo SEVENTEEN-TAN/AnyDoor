@@ -52,7 +52,7 @@ build/
 *.local
 
 # Spring Boot 配置文件（包含敏感信息）
-server/src/main/resources/application.yml
+# server/src/main/resources/application.yml
 server/src/main/resources/application-*.yml
 
 # ========== 数据库 ==========

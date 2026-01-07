@@ -1,25 +1,88 @@
 // 使用方法：打开扩展 Popup，自动检查登录状态并显示对应视图
 // 说明：实现登录、上传、同步功能，支持Bundle下拉选择和设置页面
 
-import { login, logout, me, listBundles, importBundle, importByToken, updateShareMode, checkBundleExists } from "../lib/api.js";
+import { login, logout, me, listBundles, getCaptcha, registerMain } from "../lib/api.js";
 import { CONFIG } from "../config.js";
 
 // ========== 全局变量 ==========
 let currentUser = null;
 let elements = {};
+let currentCaptchaUuid = ""; // Current Captcha UUID
 
 // ========== 视图管理 ==========
 function showView(viewName) {
   const views = {
     login: elements.loginView,
+    register: elements.registerView, // Add register view
     main: elements.mainView,
   };
 
   Object.keys(views).forEach((key) => {
-    views[key].classList.remove("active");
+    if (views[key]) views[key].classList.remove("active");
   });
   if (views[viewName]) {
     views[viewName].classList.add("active");
+    if (viewName === "register") {
+      loadCaptcha(); // Load captcha when showing register view
+    }
+  }
+}
+
+// ========== 注册处理 ==========
+async function loadCaptcha() {
+  try {
+    const res = await getCaptcha();
+    if (res.uuid && res.imageBase64) {
+      currentCaptchaUuid = res.uuid;
+      elements.captchaImg.src = "data:image/jpeg;base64," + res.imageBase64;
+    }
+  } catch (e) {
+    console.error("Load captcha failed:", e);
+  }
+}
+
+async function handleRegister() {
+  const username = elements.regUsername.value.trim();
+  const email = elements.regEmail.value.trim();
+  const password = elements.regPassword.value.trim();
+  const captchaCode = elements.regCaptcha.value.trim();
+
+  if (!username || !email || !password || !captchaCode) {
+    showMessage(elements.registerMessage, "请填写所有字段", "error");
+    return;
+  }
+
+  setButtonLoading(elements.btnRegister, true, "注册中...");
+  hideMessage(elements.registerMessage);
+
+  try {
+    const res = await registerMain({
+      username,
+      email,
+      password,
+      captchaUuid: currentCaptchaUuid,
+      captchaCode
+    });
+
+    if (res.ok) {
+      showMessage(elements.registerMessage, "注册成功！请登录", "success");
+      setTimeout(() => {
+        showView("login");
+        elements.usernameInput.value = username;
+        elements.passwordInput.value = "";
+        showMessage(elements.loginMessage, "注册成功，请登录", "success");
+      }, 1000);
+    } else {
+      showMessage(elements.registerMessage, res.error || res.message || "注册失败", "error");
+      loadCaptcha(); // refresh captcha
+      elements.regCaptcha.value = "";
+    }
+  } catch (error) {
+    console.error("Register error:", error);
+    showMessage(elements.registerMessage, `注册失败：${error.message || "网络错误"}`, "error");
+    loadCaptcha();
+  } finally {
+    setButtonLoading(elements.btnRegister, false);
   }
 }
 
@@ -635,6 +698,7 @@ function handleChoiceNew() {
   continueUploadProcess(uploadData.host, uploadData.cookies);
 }
 
+
 // ========== 绑定事件 ==========
 function bindEvents() {
   // 登录视图
@@ -645,6 +709,20 @@ function bindEvents() {
   elements.passwordInput.addEventListener("keypress", (e) => {
     if (e.key === "Enter") handleLogin();
   });
+
+  // Switch to register
+  document.getElementById("link-to-register").addEventListener("click", () => {
+    showView("register");
+  });
+
+  // 注册视图
+  if (elements.btnRegister) {
+    elements.btnRegister.addEventListener("click", handleRegister);
+    document.getElementById("link-to-login").addEventListener("click", () => {
+      showView("login");
+    });
+    elements.captchaImg.addEventListener("click", loadCaptcha);
+  }
 
   // 功能视图
   elements.btnLogout.addEventListener("click", handleLogout);
@@ -675,6 +753,7 @@ async function init() {
   elements = {
     // 视图
     loginView: document.getElementById("login-view"),
+    registerView: document.getElementById("register-view"),
     mainView: document.getElementById("main-view"),
 
     // 登录视图
@@ -682,6 +761,15 @@ async function init() {
     passwordInput: document.getElementById("password"),
     btnLogin: document.getElementById("btn-login"),
     loginMessage: document.getElementById("login-message"),
+
+    // 注册视图
+    regUsername: document.getElementById("reg-username"),
+    regEmail: document.getElementById("reg-email"),
+    regPassword: document.getElementById("reg-password"),
+    regCaptcha: document.getElementById("reg-captcha"),
+    captchaImg: document.getElementById("captcha-img"),
+    btnRegister: document.getElementById("btn-register"),
+    registerMessage: document.getElementById("register-message"),
 
     // 功能视图
     userName: document.getElementById("user-name"),

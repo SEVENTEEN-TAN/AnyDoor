@@ -288,7 +288,7 @@ function debounce(func, wait) {
 // ============== 节流函数 ==============
 function throttle(func, limit) {
     let inThrottle;
-    return function(...args) {
+    return function (...args) {
         if (!inThrottle) {
             func.apply(this, args);
             inThrottle = true;
@@ -321,3 +321,118 @@ window.AnyDoor = {
 
 console.log('%c🚪 AnyDoor Website', 'color: #3b82f6; font-size: 20px; font-weight: bold;');
 console.log('%c欢迎访问 AnyDoor 官网！', 'color: #10b981; font-size: 14px;');
+
+// ============== 注册模态框逻辑 ==============
+const registerBtn = document.getElementById('registerBtn');
+const registerModal = document.getElementById('registerModal');
+const closeModal = document.getElementById('closeModal');
+const registerForm = document.getElementById('registerForm');
+
+if (registerBtn && registerModal) {
+    let currentCaptchaUuid = '';
+
+    const loadCaptcha = async () => {
+        try {
+            const img = document.getElementById('captchaImage');
+            if (!img) return;
+
+            // Add loading state
+            img.style.opacity = '0.5';
+
+            const res = await fetch('/api/auth/captcha');
+            if (res.ok) {
+                const data = await res.json();
+                if (data.uuid && data.imageBase64) {
+                    currentCaptchaUuid = data.uuid;
+                    img.src = 'data:image/jpeg;base64,' + data.imageBase64;
+                }
+            }
+        } catch (e) {
+            console.error('Failed to load captcha', e);
+        } finally {
+            const img = document.getElementById('captchaImage');
+            if (img) img.style.opacity = '1';
+        }
+    };
+
+    // Open Modal
+    registerBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        registerModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        loadCaptcha(); // Load captcha when opening
+    });
+
+    // Refresh Captcha on click
+    const captchaImage = document.getElementById('captchaImage');
+    if (captchaImage) {
+        captchaImage.addEventListener('click', loadCaptcha);
+    }
+
+    // Close Modal
+    if (closeModal) {
+        closeModal.addEventListener('click', closeModalFunc);
+    }
+
+    registerModal.addEventListener('click', (e) => {
+        if (e.target === registerModal) {
+            closeModalFunc();
+        }
+    });
+
+    function closeModalFunc() {
+        registerModal.classList.remove('active');
+        document.body.style.overflow = '';
+        registerForm.reset();
+        currentCaptchaUuid = '';
+    }
+
+    // Submit
+    registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const submitBtn = registerForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = '注册中...';
+
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const captchaCode = document.getElementById('captcha').value;
+
+        try {
+            const response = await fetch('/api/auth/register-main', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username,
+                    password,
+                    email,
+                    captchaUuid: currentCaptchaUuid,
+                    captchaCode: captchaCode
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.ok) {
+                alert('注册成功！请使用新账号登录。');
+                closeModalFunc();
+            } else {
+                alert('注册失败: ' + (data.error || data.message || '未知错误'));
+                // Refresh captcha on failure
+                loadCaptcha();
+                document.getElementById('captcha').value = '';
+            }
+        } catch (error) {
+            console.error('Registration failed:', error);
+            alert('注册请求失败，请稍后重试。');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+        }
+    });
+}

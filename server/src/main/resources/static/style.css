@@ -1,11 +1,28 @@
 :root {
-    /* 颜色系统 */
+    /* 颜色系统 - 基础 */
     --color-bg: #000000;
     --color-bg-secondary: #0a0a0a;
     --color-bg-tertiary: #111111;
     --color-text-primary: #ffffff;
     --color-text-secondary: #999999;
     --color-text-tertiary: #666666;
+
+    /* 组件颜色变量 (支持 Light/Dark) */
+    --card-bg: rgba(255, 255, 255, 0.02);
+    --card-border: rgba(255, 255, 255, 0.06);
+    --nav-bg: rgba(0, 0, 0, 0.8);
+    --nav-bg-scrolled: rgba(0, 0, 0, 0.95);
+    --nav-border: rgba(255, 255, 255, 0.05);
+    --btn-secondary-bg: rgba(255, 255, 255, 0.05);
+    --btn-secondary-border: rgba(255, 255, 255, 0.1);
+    --btn-secondary-hover-bg: rgba(255, 255, 255, 0.1);
+    --hero-badge-bg: rgba(59, 130, 246, 0.1);
+    --hero-badge-border: rgba(59, 130, 246, 0.2);
+    --footer-border: rgba(255, 255, 255, 0.05);
+    --input-bg: rgba(255, 255, 255, 0.05);
+    --input-border: rgba(255, 255, 255, 0.1);
+
+    /* 强调色 (保持不变) */
     --color-accent: #3b82f6;
     --color-accent-hover: #2563eb;
     --color-success: #10b981;
@@ -22,6 +39,7 @@
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
     --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.3);
 
     /* 字体 */
@@ -51,8 +69,44 @@
     --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Light Theme Override */
+@media (prefers-color-scheme: light) {
+    :root {
+        --color-bg: #ffffff;
+        --color-bg-secondary: #f9fafb;
+        --color-bg-tertiary: #f3f4f6;
+        --color-text-primary: #111827;
+        --color-text-secondary: #4b5563;
+        --color-text-tertiary: #9ca3af;
+
+        --card-bg: rgba(0, 0, 0, 0.02);
+        --card-border: rgba(0, 0, 0, 0.06);
+        --nav-bg: rgba(255, 255, 255, 0.8);
+        --nav-bg-scrolled: rgba(255, 255, 255, 0.95);
+        --nav-border: rgba(0, 0, 0, 0.05);
+        --btn-secondary-bg: rgba(0, 0, 0, 0.05);
+        --btn-secondary-border: rgba(0, 0, 0, 0.1);
+        --btn-secondary-hover-bg: rgba(0, 0, 0, 0.1);
+        --hero-badge-bg: rgba(59, 130, 246, 0.05);
+        --hero-badge-border: rgba(59, 130, 246, 0.2);
+        --footer-border: rgba(0, 0, 0, 0.05);
+        --input-bg: rgba(0, 0, 0, 0.03);
+        --input-border: rgba(0, 0, 0, 0.1);
+
+        --gradient-text: linear-gradient(135deg, #111827 0%, #4b5563 100%);
+
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    }
+}
+
 /* 重置样式 */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -89,17 +143,17 @@ a:focus {
     left: 0;
     right: 0;
     height: 70px;
-    background: rgba(0, 0, 0, 0.8);
+    background: var(--nav-bg);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--nav-border);
     z-index: 1000;
     transition: all var(--transition-base);
 }
 
 .nav.scrolled {
     height: 60px;
-    background: rgba(0, 0, 0, 0.95);
+    background: var(--nav-bg-scrolled);
     box-shadow: var(--shadow-lg);
 }
 
@@ -253,8 +307,15 @@ a:focus {
 }
 
 @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
 }
 
 .hero-title {
@@ -314,7 +375,7 @@ a:focus {
 }
 
 .btn-secondary {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--btn-secondary-bg);
     color: var(--color-text-primary);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -336,8 +397,8 @@ a:focus {
     align-items: center;
     gap: var(--spacing-2xl);
     padding: var(--spacing-xl);
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: var(--card-bg);
+    border: 1px solid var(--nav-border);
     border-radius: var(--radius-2xl);
     backdrop-filter: blur(10px);
 }
@@ -387,8 +448,17 @@ a:focus {
 }
 
 @keyframes scroll-animation {
-    0%, 100% { opacity: 0.3; transform: translateY(0); }
-    50% { opacity: 1; transform: translateY(10px); }
+
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: translateY(0);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translateY(10px);
+    }
 }
 
 /* 通用区域 */
@@ -429,8 +499,8 @@ a:focus {
 
 .feature-card {
     padding: var(--spacing-2xl);
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: var(--card-bg);
+    border: 1px solid var(--nav-border);
     border-radius: var(--radius-xl);
     transition: all var(--transition-base);
     position: relative;
@@ -560,8 +630,8 @@ a:focus {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: var(--card-bg);
+    border: 1px solid var(--nav-border);
     border-radius: var(--radius-xl);
     margin: 0 auto;
     color: var(--color-accent);
@@ -632,8 +702,8 @@ a:focus {
 
 .plan-card {
     padding: var(--spacing-2xl);
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
     border-radius: var(--radius-xl);
     transition: all var(--transition-base);
 }
@@ -701,7 +771,7 @@ a:focus {
 .pricing-table th,
 .pricing-table td {
     padding: var(--spacing-lg);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid var(--card-border);
     color: var(--color-text-secondary);
     line-height: 1.7;
 }
@@ -713,7 +783,7 @@ a:focus {
 }
 
 .pricing-table tbody tr:nth-child(odd) {
-    background: rgba(255, 255, 255, 0.02);
+    background: var(--card-bg);
 }
 
 .pricing-table tbody tr:hover {
@@ -749,7 +819,7 @@ a:focus {
 .footer {
     padding: 80px 0 40px;
     background: var(--color-bg);
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid var(--nav-border);
 }
 
 .footer-grid {
@@ -794,7 +864,7 @@ a:focus {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--btn-secondary-bg);
     border-radius: 50%;
     color: var(--color-text-secondary);
     transition: all var(--transition-fast);
@@ -831,7 +901,7 @@ a:focus {
 
 .footer-bottom {
     padding-top: var(--spacing-2xl);
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid var(--nav-border);
     text-align: center;
     color: var(--color-text-tertiary);
     font-size: 0.875rem;
@@ -857,10 +927,21 @@ a:focus {
     animation: fadeInUp 0.8s ease-out forwards;
 }
 
-.delay-1 { animation-delay: 0.1s; }
-.delay-2 { animation-delay: 0.2s; }
-.delay-3 { animation-delay: 0.3s; }
-.delay-4 { animation-delay: 0.4s; }
+.delay-1 {
+    animation-delay: 0.1s;
+}
+
+.delay-2 {
+    animation-delay: 0.2s;
+}
+
+.delay-3 {
+    animation-delay: 0.3s;
+}
+
+.delay-4 {
+    animation-delay: 0.4s;
+}
 
 @keyframes fadeInUp {
     to {
@@ -903,8 +984,8 @@ a:focus {
         flex-direction: column;
         gap: var(--spacing-md);
         padding: var(--spacing-lg) var(--spacing-xl);
-        background: rgba(0, 0, 0, 0.95);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        background: var(--nav-bg-scrolled);
+        border-bottom: 1px solid var(--nav-border);
     }
 
     .nav-links.active .btn-nav {
@@ -1009,11 +1090,129 @@ a:focus {
 
 .card {
     padding: var(--spacing-xl);
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
     border-radius: var(--radius-xl);
 }
 
-.card + .card {
+.card+.card {
     margin-top: var(--spacing-lg);
+}
+
+/* 模态框 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal {
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-2xl);
+    width: 90%;
+    max-width: 400px;
+    box-shadow: var(--shadow-2xl);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-overlay.active .modal {
+    transform: translateY(0);
+}
+
+.modal-close {
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-sm);
+    transition: all 0.2s;
+}
+
+.modal-close:hover {
+    color: var(--color-text-primary);
+    background: var(--card-bg);
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+    color: var(--color-text-primary);
+}
+
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.form-label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-primary);
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.modal-footer {
+    margin-top: var(--spacing-xl);
+}
+
+.btn-full {
+    width: 100%;
+    justify-content: center;
+}
+
+.captcha-container {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: center;
+}
+
+.captcha-image {
+    height: 46px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    border: 1px solid var(--input-border);
+    background: var(--input-bg);
 }

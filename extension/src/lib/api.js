@@ -35,6 +35,17 @@ async function request(path, { method = "GET", body } = {}) {
   return res.json().catch(() => ({}));
 }
 
+// 注册 (Main Account)
+export async function registerMain(payload) {
+  // payload: { username, password, email, captchaUuid, captchaCode }
+  return request("/api/auth/register-main", { method: "POST", body: payload });
+}
+
+// 获取验证码
+export async function getCaptcha() {
+  return request("/api/auth/captcha");
+}
+
 export async function login(username, password) {
   const data = await request("/api/auth/login", { method: "POST", body: { username, password } });
   if (data && data.token) {

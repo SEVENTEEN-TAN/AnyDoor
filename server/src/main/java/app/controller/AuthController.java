@@ -11,6 +11,7 @@ import app.model.dto.UpdateSubAccountRequest;
 import app.service.BundleService;
 import app.service.GroupService;
 import app.service.UserService;
+import app.service.CaptchaService;
 import cn.dev33.satoken.stp.StpUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
@@ -28,12 +29,14 @@ public class AuthController {
     private final UserService userService;
     private final GroupService groupService;
     private final BundleService bundleService;
+    private final CaptchaService captchaService;
     private final app.service.CacheCleanupService cacheCleanupService;
 
-    public AuthController(UserService userService, GroupService groupService, BundleService bundleService, app.service.CacheCleanupService cacheCleanupService) {
+    public AuthController(UserService userService, GroupService groupService, BundleService bundleService, CaptchaService captchaService, app.service.CacheCleanupService cacheCleanupService) {
         this.userService = userService;
         this.groupService = groupService;
         this.bundleService = bundleService;
+        this.captchaService = captchaService;
         this.cacheCleanupService = cacheCleanupService;
     }
 
@@ -564,6 +567,58 @@ public class AuthController {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "创建主账号失败"));
+        }
+    }
+
+    /**
+     * 获取验证码
+     */
+    @GetMapping("/captcha")
+    public ResponseEntity<?> getCaptcha() {
+        return ResponseEntity.ok(captchaService.generate());
+    }
+
+    /**
+     * 用户自助注册主账号（公开）
+     */
+    public record RegisterMainReq(String username, String password, String email, String captchaUuid, String captchaCode) {
+    }
+
+    @PostMapping("/register-main")
+    public ResponseEntity<?> registerMain(@RequestBody RegisterMainReq req) {
+        if (req == null || isBlank(req.username()) || isBlank(req.password())) {
+            return ResponseEntity.badRequest().body(Map.of("error", "用户名和密码不能为空"));
+        }
+
+        // 验证验证码
+        if (isBlank(req.captchaUuid()) || isBlank(req.captchaCode())) {
+            return ResponseEntity.badRequest().body(Map.of("error", "请输入验证码"));
+        }
+
+        if (!captchaService.validate(req.captchaUuid(), req.captchaCode())) {
+             return ResponseEntity.badRequest().body(Map.of("error", "验证码错误或已失效"));
+        }
+
+        if (req.password().length() < 6) {
+            return ResponseEntity.badRequest().body(Map.of("error", "密码至少需要6位"));
+        }
+
+        try {
+            // 直接调用创建主账号逻辑（与管理员创建逻辑一致，但通过公开接口暴露）
+            User newUser = userService.createMainAccountByAdmin(req.username(), req.password(), req.email());
+
+            Map<String, Object> respMap = new HashMap<>();
+            respMap.put("ok", true);
+            respMap.put("userId", newUser.id);
+            respMap.put("username", newUser.username);
+            respMap.put("role", newUser.role);
+            respMap.put("message", "注册成功");
+
+            return ResponseEntity.ok(respMap);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "注册失败"));
         }
     }
 

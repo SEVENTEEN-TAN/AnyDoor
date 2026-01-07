@@ -143,6 +143,47 @@
       }
     }
 
+    /* ==============================
+       注册视图样式
+       ============================== */
+    #register-view {
+      padding: 40px 30px;
+    }
+
+    .link-text {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 13px;
+      color: #4f46e5;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .link-text:hover {
+      text-decoration: underline;
+    }
+
+    .captcha-container {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .captcha-container input {
+      flex: 1;
+      width: auto;
+      /* override full width */
+    }
+
+    .captcha-img {
+      width: 100px;
+      height: 42px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      cursor: pointer;
+      object-fit: cover;
+    }
+
     /* ========== 功能视图 ========== */
     #main-view {
       padding: 20px;
@@ -442,6 +483,36 @@
     <button id="btn-login" class="btn btn-primary">
       <span class="btn-text">登录</span>
     </button>
+    <div class="link-text" id="link-to-register">没有账号？去注册</div>
+  </div>
+
+  <!-- 注册视图 -->
+  <div id="register-view" class="view">
+    <div class="login-title">📝 注册账号</div>
+    <div id="register-message" class="message"></div>
+
+    <div class="form-group">
+      <input type="text" id="reg-username" placeholder="用户名 (至少2位)" autocomplete="off" />
+    </div>
+
+    <div class="form-group">
+      <input type="email" id="reg-email" placeholder="邮箱" autocomplete="off" />
+    </div>
+
+    <div class="form-group">
+      <input type="password" id="reg-password" placeholder="密码 (至少6位)" autocomplete="new-password" />
+    </div>
+
+    <div class="captcha-container">
+      <input type="text" id="reg-captcha" placeholder="验证码" maxlength="4" autocomplete="off" />
+      <img id="captcha-img" src="" alt="验证码" class="captcha-img" title="点击刷新" />
+    </div>
+
+    <button id="btn-register" class="btn btn-primary">
+      <span class="btn-text">立即注册</span>
+    </button>
+
+    <div class="link-text" id="link-to-login">已有账号？去登录</div>
   </div>
 
   <!-- 功能视图 -->

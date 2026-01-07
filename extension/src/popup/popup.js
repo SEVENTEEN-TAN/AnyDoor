@@ -106,6 +106,8 @@ async function handleLogin() {
 
     if (result && result.token) {
       showMessage(elements.loginMessage, "登录成功！", "success");
+      // Reset button state
+      setButtonLoading(elements.btnLogin, false);
       // 延迟跳转，让用户看到成功提示
       setTimeout(async () => {
         await checkAuthAndShowView();

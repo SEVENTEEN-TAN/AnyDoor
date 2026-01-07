@@ -225,40 +225,52 @@
     }
 
     .header-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
       margin-bottom: 20px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid #e5e7eb;
     }
 
     .user-name {
       font-size: 15px;
       font-weight: 600;
       color: #1f2937;
+      order: 2;
+      /* Put username below buttons */
     }
 
     .header-actions {
       display: flex;
-      gap: 8px;
+      gap: 12px;
+      width: 100%;
     }
 
     .icon-btn {
-      padding: 6px 12px;
-      background: transparent;
+      flex: 1;
+      padding: 8px;
+      background: #f3f4f6;
+      /* Slight background for buttons */
       border: 1px solid #e5e7eb;
       border-radius: 6px;
       font-size: 13px;
       cursor: pointer;
       transition: all 0.2s;
-      color: #6b7280;
+      color: #374151;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
 
     .icon-btn:hover {
-      background: #f9fafb;
+      background: #e5e7eb;
       border-color: #d1d5db;
-      color: #374151;
+    }
+
+    .user-name-footer {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #e5e7eb;
+      font-size: 14px;
+      color: #6b7280;
     }
 
     /* 按钮组（一行两个按钮） */
@@ -567,11 +579,10 @@
   <!-- 功能视图 -->
   <div id="main-view" class="view">
     <div class="header-bar">
-      <div class="user-name" id="user-name">用户</div>
       <div class="header-actions">
         <button class="icon-btn" id="btn-import">📥 导入</button>
         <button class="icon-btn" id="btn-settings">⚙️ 设置</button>
-        <button class="icon-btn" id="btn-logout">退出</button>
+        <button class="icon-btn" id="btn-logout">🚪 退出</button>
       </div>
     </div>
 
@@ -598,6 +609,8 @@
     <!-- 结果展示 -->
     <div id="upload-result" class="result-box"></div>
     <div id="sync-result" class="result-box"></div>
+
+    <div class="user-name-footer" id="user-name">用户</div>
   </div>
 
   <!-- 上传对话框 -->

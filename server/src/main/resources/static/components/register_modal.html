@@ -1,0 +1,52 @@
+<div class="modal-overlay" id="registerModal">
+    <div class="modal">
+        <button class="modal-close" id="closeModal">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6L6 18M6 6l12 12"></path>
+            </svg>
+        </button>
+        <h3 class="modal-title">注册 AnyDoor</h3>
+
+        <div class="oauth-buttons">
+            <a href="/api/auth/linuxdo/login" class="btn btn-linuxdo btn-full">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" />
+                    <path d="M2 17L12 22L22 17" />
+                    <path d="M2 12L12 17L22 12" />
+                </svg>
+                通过 Linux.do 登录/注册
+            </a>
+        </div>
+        <div class="divider">
+            <span>或使用邮箱注册</span>
+        </div>
+
+        <form id="registerForm">
+            <div class="form-group">
+                <label class="form-label" for="username">用户名</label>
+                <input type="text" id="username" class="form-input" placeholder="请输入用户名" required autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="email">邮箱</label>
+                <input type="email" id="email" class="form-input" placeholder="请输入邮箱" required autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="password">密码</label>
+                <input type="password" id="password" class="form-input" placeholder="请输入密码 (至少6位)" required
+                    minlength="6">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="captcha">验证码</label>
+                <div class="captcha-container">
+                    <input type="text" id="captcha" class="form-input" placeholder="输入验证码" required autocomplete="off"
+                        maxlength="4">
+                    <img src="" alt="验证码" class="captcha-image" id="captchaImage" title="点击刷新">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary btn-full">立即注册</button>
+            </div>
+        </form>
+    </div>
+</div>

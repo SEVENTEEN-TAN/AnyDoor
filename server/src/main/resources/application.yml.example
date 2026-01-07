@@ -1,54 +1,46 @@
-# 使用方法：
-# 1. 复制此文件为 application.yml
-# 2. 设置以下环境变量：
-#    - DB_HOST: 数据库主机地址
-#    - DB_PORT: 数据库端口（默认3306）
-#    - DB_NAME: 数据库名称
-#    - DB_USER: 数据库用户名
-#    - DB_PASS: 数据库密码
-# 3. 或直接在 application.yml 中填入实际值（不要提交到版本控制）
-
 server:
   port: 8080
 
-sa-token:
-  token-name: satoken
-  timeout: 604800    # 7 天
-  is-concurrent: true
-  is-share: true
-  token-style: uuid
-
-logging:
-  level:
-    root: info
-
 spring:
-  sql:
-    init:
-      mode: always
   datasource:
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:AnyDoor}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: ${DB_USER:your_username}
-    password: ${DB_PASS:your_password}
+    type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/AnyDoor?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: password
     druid:
-      url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:AnyDoor}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      username: ${DB_USER:your_username}
-      password: ${DB_PASS:your_password}
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      initial-size: 3
+      initial-size: 5
+      min-idle: 5
       max-active: 20
-      min-idle: 3
       max-wait: 60000
-      validation-query: select 1
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1
       test-while-idle: true
       test-on-borrow: false
       test-on-return: false
-      connection-init-sqls: SET NAMES utf8mb4
-      connection-properties: useUnicode=true;characterEncoding=utf-8
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
 
 mybatis-flex:
   configuration:
     map-underscore-to-camel-case: true
   global-config:
     print-banner: false
+
+sa-token:
+  token-name: satoken
+  timeout: 2592000
+  active-timeout: -1
+  is-concurrent: true
+  is-share: true
+  token-style: uuid
+  is-log: false
+
+linuxdo:
+  client-id: YOUR_CLIENT_ID
+  client-secret: YOUR_CLIENT_SECRET
+  redirect-uri: http://localhost:8080/api/auth/linuxdo/callback
+  auth-uri: https://connect.linux.do/oauth2/authorize
+  token-uri: https://connect.linux.do/oauth2/token
+  user-info-uri: https://connect.linux.do/api/user
